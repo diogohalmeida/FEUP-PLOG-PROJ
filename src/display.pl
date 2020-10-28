@@ -40,6 +40,9 @@ print_element(X):-
     write(S),
     write(' |').
 
-print_symbol(2,S):-S=' O'.
-print_symbol(1,S):-S=' X'.
-print_symbol(0,S):-S='  '.
+print_symbol(2,S):-
+    S=' O'.
+print_symbol(1,S):-
+    S=' X'.
+print_symbol(0,S):-
+    S='  '.

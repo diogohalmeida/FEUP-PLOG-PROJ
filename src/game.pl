@@ -17,17 +17,15 @@ gameLoop(GameState) :-
 
 blackPlayerTurn(GameState, NextGameState):-
     write('Black Turn (X)\n'),
-    write('Row:\n'),
-    read(R1),
-    write('Column:\n'),
-    read(C1),
-    playPiece(GameState,R1,C1,1,NextGameState).
+    playPiece(GameState,1,NextGameState).
 
 
 redPlayerTurn(GameState, NextGameState):-
     write('Red Turn (O)\n'),
-    write('Row:\n'),
-    read(R2),
-    write('Column:\n'),
-    read(C2),
-    playPiece(GameState,R2,C2,2,NextGameState).
+    playPiece(GameState,2,NextGameState).
+
+
+endGame(Winner):-
+    write('3 in a row!\n'),
+    write(Winner),
+    write('Wins the Game!').
