@@ -1,7 +1,9 @@
+:-dynamic(state/2).
+
 start :-
     initial(GameState),
     displayInitialBoard(GameState),
-    gameLoop(GameState).
+    gameLoop('Pedro','Diogo').
 
 initial(GameState) :-
     initialBoard(GameState).
@@ -9,7 +11,22 @@ initial(GameState) :-
 displayInitialBoard(GameState):-
     print_board(GameState).
 
-gameLoop(GameState) :-
+repeat.
+repeat:-repeat.
+
+gameLoop(Player1,Player2) :-
+    initial(InitialBoard),
+    assert(move(1,Player1)),
+    assert(move(2,Player2)),
+    assert(state(1,InitialBoard)),
+    repeat,
+        retract(state(Player,Board)),
+        once(playPiece(Player,Board,NextPlayer,UpdatedBoard)),
+        assert(state(NextPlayer,UpdatedBoard)),
+        checkGameOver(NextPlayer),
+    endGame.
+
+
     blackPlayerTurn(GameState, BlackGameState),
     redPlayerTurn(BlackGameState, RedGameState),
     gameLoop(RedGameState).
@@ -25,7 +42,8 @@ redPlayerTurn(GameState, NextGameState):-
     playPiece(GameState,2,NextGameState).
 
 
-endGame(Winner):-
+endGame:-
+    state(Player,Board),
     write('3 in a row!\n'),
-    write(Winner),
+    write(Player),
     write('Wins the Game!').

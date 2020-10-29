@@ -1,14 +1,24 @@
-playPiece(GameState, Player, NextGameState) :-
+playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
     readColumn(Column),
     readRow(Row),
-    checkOccupied(Column, Row, GameState, Player, NextGameState, Valid),
+    checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid),
     (
-        Valid == 0;
+        Valid =:= 0;
         (
-            Valid == 1,
-            putPiece(GameState, Row, Column, Player, NextGameState),
-            checkGameOver(Column, Row, NextGameState, GameOver)
+            Valid =:= 1,
+            putPiece(Board, Row, Column, Player, UpdatedBoard)
+            %checkGameOver(Column, Row, UpdatedBoard, GameOver)
         )         
+    ),
+    (
+        (
+            Player =:= 1,
+            NextPlayer is 2
+        );
+        (
+            Player =:= 2,
+            NextPlayer is 1
+        )
     ).
 
 
@@ -54,38 +64,51 @@ readColumn(CheckedColumn) :-
     read(Column),
     checkColumn(Column, CheckedColumn).
 
-checkOccupied(Column, Row, GameState, Player, NextGameState, Valid):-
-    getSquarePiece(Column, Row, Content, GameState),
+checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid):-
+    getSquarePiece(Column, Row, Content, Board),
     (
         (
-            Content == 0,
+            Content =:= 0,
             Valid is 1
         );
         (
-            Content == 1,
+            Content =:= 1,
             write('Square occupied by Black!\nSelect again:\n'),
             Valid is 0,
-            playPiece(GameState, Player, NextGameState)
+            playPiece(Player,Board, NextPlayer, UpdatedBoard)
         );
         (
-            Content == 2,
+            Content =:= 2,
             write('Square occupied by Red!\nSelect again:\n'),
             Valid is 0,
-            playPiece(GameState, Player, NextGameState)
+            playPiece(Player,Board, NextPlayer, UpdatedBoard)
         )
     ).  
 
-checkGameOver(Column, Row, GameState, GameOver):-
-    getNorthSquares(Column, Row, GameState, GameOver),
-    write(GameOver).
+
+
+/*print_matrix([],6).
+
+print_matrix([H|T],X):-
+    X1 is X+1,
+    print_line(H),
+    print_matrix(T,X1).
+
+print_line([]).
+
+print_line([H|T],Row,Column,Board):-
     (
-        (
-        GameOver == 1,
-        endGame("Black")
-        );
-        (
-        GameOver == 2,
-        endGame("Red")
-        );
-        GameOver == 0
-    ).
+        H =:= 1,
+        getSquarePiece(Column, Row, 1, Board)
+    );
+    (
+        H =:= 0,
+        NextColumn is Column+1,
+        print_line(T,Row,NextColumn,Board).
+    )
+    write(H),
+
+checkDirections(Column, Row):-*/
+
+
+checkGameOver(Board):- fail.

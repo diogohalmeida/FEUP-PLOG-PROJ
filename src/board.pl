@@ -1,5 +1,4 @@
 putPiece(InitialMatrix,R,C,Player,FinalMatrix):-
-	print_board(InitialMatrix),
 	putRow(R,InitialMatrix,C,Player,FinalMatrix),
 	print_board(FinalMatrix).
 	
