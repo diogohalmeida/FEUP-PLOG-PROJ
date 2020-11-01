@@ -1,3 +1,4 @@
+%predicate that reads where the player wants to play the piece and call the predicate putPiece to execute the play. Also updates the next player to play.
 playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
     readColumn(Column),
     readRow(Row),
@@ -21,7 +22,7 @@ playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
         )
     ).
 
-
+%predicates that convert the user input to the number of the column
 checkColumn('A', CheckedColumn) :-
     CheckedColumn=1.
 checkColumn('B', CheckedColumn) :-
@@ -38,6 +39,7 @@ checkColumn(_Column, CheckedColumn) :-
     write('Invalid Column!\nSelect again:\n'),
     readColumn(CheckedColumn).
 
+%predicates that convert the user input to the number of the row
 checkRow(1, CheckedRow) :-
     CheckedRow=1.
 checkRow(2, CheckedRow) :-
@@ -54,16 +56,19 @@ checkRow(_Row, CheckedRow) :-
     write('Invalid Row!\nSelect again:\n'),
     readRow(CheckedRow).
 
+%predicate that reads the user input for the row
 readRow(CheckedRow) :-
     write('Row:\n'),
     read(Row),
     checkRow(Row, CheckedRow).
 
+%predicate that reads the user input for the column
 readColumn(CheckedColumn) :-
     write('Column:\n'),
     read(Column),
     checkColumn(Column, CheckedColumn).
 
+%predicate that verifys if a cell is already occupied for another piece
 checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid):-
     getSquarePiece(Column, Row, Content, Board),
     (
@@ -86,29 +91,5 @@ checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid):-
     ).  
 
 
-
-/*print_matrix([],6).
-
-print_matrix([H|T],X):-
-    X1 is X+1,
-    print_line(H),
-    print_matrix(T,X1).
-
-print_line([]).
-
-print_line([H|T],Row,Column,Board):-
-    (
-        H =:= 1,
-        getSquarePiece(Column, Row, 1, Board)
-    );
-    (
-        H =:= 0,
-        NextColumn is Column+1,
-        print_line(T,Row,NextColumn,Board).
-    )
-    write(H),
-
-checkDirections(Column, Row):-*/
-
-
+%predicate that checkc if the game is over, not implemented yet
 checkGameOver(Board):- fail.

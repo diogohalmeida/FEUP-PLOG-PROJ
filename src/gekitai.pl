@@ -6,6 +6,6 @@
 :-use_module(library(lists)).
 
 
-
-gekitai :-
-    start.
+%main predicate
+play :-
+    start. 
