@@ -1,15 +1,15 @@
 :-dynamic(state/2).
 
-%predicate that starts the game
+%Starts the game
 start :-
     initial(GameState),
     gameLoop('Pedro','Diogo').
 
-%predicate that sets up the initial board
+%Sets up the initial board
 initial(GameState) :-
     initialBoard(GameState).
 
-%predicate that displays the initial board
+%Displays the initial board and signals the next player's turn
 display_game(GameState,Player):-
     print_board(GameState),
     (
@@ -25,11 +25,12 @@ display_game(GameState,Player):-
         nl    
     ).
 
-%predicates that help implementing the game loop 
+%Predicates that help implementing the game loop 
 repeat.
 repeat:-repeat.
 
-%predicate that implements the game loop, correctly assigning the turn for each player and updating the board
+%Implements the game loop, correctly assigning the turn for each player, updating the board and checking game over. 
+%The game loop ends when the this predicate detects game over (checkGameOver is true)
 gameLoop(Player1,Player2) :-
     initial(InitialBoard),
     assert(move(1,Player1)),
@@ -40,10 +41,10 @@ gameLoop(Player1,Player2) :-
         once(display_game(Board,Player)),
         once(playPiece(Player,Board,NextPlayer,UpdatedBoard)),
         assert(state(NextPlayer,UpdatedBoard)),
-        checkGameOver(NextPlayer),                                    % is not implemented yet
+        checkGameOver(NextPlayer),                                    % checkGameOver is not implemented yet, it currently returns fail so the loop can be infinitely running
     endGame.
 
-%predicate that displays the result after ending the game
+%Displays the result after ending the game
 endGame:-
     state(Player,Board),
     write('3 in a row!\n'),

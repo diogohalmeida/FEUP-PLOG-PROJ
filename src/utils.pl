@@ -1,4 +1,4 @@
-%predicate that gets an element from a specific cell
+%Gets an element from a specific cell
 %nth0(?Index, ?List, ?Elem)
 getSquarePiece(Column, Row, Content, GameState) :-
     CalcRow is Row-1,

@@ -6,6 +6,6 @@
 :-use_module(library(lists)).
 
 
-%main predicate
+%Main predicate
 play :-
     start. 

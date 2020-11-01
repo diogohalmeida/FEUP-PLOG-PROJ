@@ -1,4 +1,6 @@
-%predicate that reads where the player wants to play the piece and call the predicate putPiece to execute the play. Also updates the next player to play.
+%Reads where the player wants to play the piece and checks if that position is occupied.
+%If it isn't it calls the predicate putPiece to execute the play. If it is, Valid = 0 and playPiece is called again for a valid position.
+%After the play is done it also updates the next player to play.
 playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
     readColumn(Column),
     readRow(Row),
@@ -22,7 +24,7 @@ playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
         )
     ).
 
-%predicates that convert the user input to the number of the column
+%Predicates that convert the user input to the number of the column
 checkColumn('A', CheckedColumn) :-
     CheckedColumn=1.
 checkColumn('B', CheckedColumn) :-
@@ -39,7 +41,7 @@ checkColumn(_Column, CheckedColumn) :-
     write('Invalid Column!\nSelect again:\n'),
     readColumn(CheckedColumn).
 
-%predicates that convert the user input to the number of the row
+%Predicates that convert the user input to the number of the row
 checkRow(1, CheckedRow) :-
     CheckedRow=1.
 checkRow(2, CheckedRow) :-
@@ -56,19 +58,21 @@ checkRow(_Row, CheckedRow) :-
     write('Invalid Row!\nSelect again:\n'),
     readRow(CheckedRow).
 
-%predicate that reads the user input for the row
+%Prompts user input for the row and reads it
 readRow(CheckedRow) :-
     write('Row:\n'),
     read(Row),
     checkRow(Row, CheckedRow).
 
-%predicate that reads the user input for the column
+%Prompts user input for the column and reads it
 readColumn(CheckedColumn) :-
     write('Column:\n'),
     read(Column),
     checkColumn(Column, CheckedColumn).
 
-%predicate that verifys if a cell is already occupied for another piece
+%Verifies if a cell is already occupied for another piece
+%If it is, warn the user, do Valid = 0 and call playPiece again for another input
+%If it isn't, Valid = 1
 checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid):-
     getSquarePiece(Column, Row, Content, Board),
     (
@@ -91,5 +95,5 @@ checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid):-
     ).  
 
 
-%predicate that checkc if the game is over, not implemented yet
+%Checks if the game is over, not implemented yet
 checkGameOver(Board):- fail.

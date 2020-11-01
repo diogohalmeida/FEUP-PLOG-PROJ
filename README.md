@@ -1,6 +1,6 @@
-# Gekitai
+# PLOG - TP1
 
-## Intermediate Report  - PLOG
+## Intermediate Report  - Gekitai
 
 ### T4_Gekitai3
 
@@ -49,7 +49,7 @@ The first player to either line up three of their color in a row at the end of t
 
 ### Board
 
-For the board representation we used lists within a list (a matrix). This proved to be the most efficient way to represent both rows and columns. For the pieces and their illustration, we used 3 integers: a 0 represents an empty space, with the Black and Red Players being represented by 1's and 2's, respectively. Below is the implementation of the board:
+For the board representation we used lists within a list (a matrix). This proved to be the most efficient way to represent both rows and columns. For the pieces and their illustration, we used 3 integers: a 0 represents an empty space, with the Black and Red Players being represented by 1's and 2's, respectively. Below is the implementation of an example board:
 
 ```
 [
@@ -180,7 +180,7 @@ For the board pieces display, the values **0** (empty board), **1** (black playe
 
 The full board is displayed by the predicate ``print_board(X)``, that prints the header of the board and then calls ``print_matrix()``, that is in charge of printing each line and its separators recursively until it reaches its base case (``print_matrix([], 6)``).
 
-During the game, each player is prompted to play in their turn by a message that asks for the column and row. Although the player chooses the column to play through a letter, this letter is actually converted to a number by the predicate (``checkColumn(Column, IndexCol)``), so the piece can placed in the correct position.
+During the game, each player is prompted to play in their turn by a message that asks for the column and row. Although the player chooses the column to play through a letter, this letter is actually converted to a number by the predicate (``checkColumn(Column, IndexCol)``), so the board position can be indexed and the piece can be placed in the correct position.
 
 - #### Initial Situation 
 
@@ -203,5 +203,5 @@ To run the game:
 - In SICStus, load src/gekitai.pl;
 - Type play. in the terminal.
 
-In player inputs, input letters for the columns (e.g. 'A') and numbers for the rows (e.g. '1').
+In player inputs, input letters for the columns (e.g. 'A') and numbers for the rows (e.g. 1).
 
