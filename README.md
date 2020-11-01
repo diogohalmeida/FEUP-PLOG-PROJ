@@ -25,19 +25,19 @@ When placed, a marker pushes all adjacent pieces outwards one space if there is 
 
 If there is not an open space on the opposite side of the pushed piece, it does not push (a newly played piece cannot push two or more other lined-up pieces).
 
-![board](.\img\repel.png)
+![repel](.\img\repel.png)
 
 
 
  If a piece is shoved off of the board it is returned to the player.
 
-![board](.\img\push.png)
+![push](.\img\push.png)
 
 
 
 The first player to either line up three of their color in a row at the end of their turn (after pushing) OR have all eight of their markers on the board (also after pushing), is declared the winner.
 
-![board](.\img\3row.png)
+![3row](.\img\3row.png)
 
 [Source](https://boardgamegeek.com/boardgame/295449/gekitail) | [Rules](https://s3.amazonaws.com/geekdo-files.com/bgg260437?response-content-disposition=inline%3B%20filename%3D%22Gekitai_Rules.pdf%22&response-content-type=application%2Fpdf&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJYFNCT7FKCE4O6TA%2F20201101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201101T160735Z&X-Amz-SignedHeaders=host&X-Amz-Expires=120&X-Amz-Signature=7e76faaaf75b807f90a3a36f4bf395bb78425eee24dce48029893d8f5643cd33)
 
