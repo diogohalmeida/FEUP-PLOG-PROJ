@@ -8,7 +8,7 @@ putRow(1,[Row|RestRow],C,Player,[NewRow|RestRow]):-
 	
 putRow(NRow,[Row|RestRow],C,Player,[Row|NewRow]):-
 	NRow > 1,
-	N is NRow-1,
+    N is NRow-1,
 	putRow(N,RestRow,C,Player,NewRow).
 
 %Predicates to find the right column to put the piece
