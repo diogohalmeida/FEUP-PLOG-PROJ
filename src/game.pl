@@ -41,12 +41,14 @@ gameLoop(Player1,Player2) :-
         once(display_game(Board,Player)),
         once(playPiece(Player,Board,NextPlayer,UpdatedBoard)),
         assert(state(NextPlayer,UpdatedBoard)),
-        checkGameOver(NextPlayer),                                    % checkGameOver is not implemented yet, it currently returns fail so the loop can be infinitely running
+        checkGameOver(UpdatedBoard),                                    % checkGameOver is not implemented yet, it currently returns fail so the loop can be infinitely running
+    print_board(UpdatedBoard),
     endGame.
 
 %Displays the result after ending the game
 endGame:-
     state(Player,Board),
     write('3 in a row!\n'),
-    write(Player),
-    write('Wins the Game!').
+    (Player =:= 1 -> Winner is 2; Winner is 1),
+    write(Winner),
+    write(' Wins the Game!').
