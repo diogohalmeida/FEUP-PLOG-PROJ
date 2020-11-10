@@ -47,8 +47,7 @@ gameLoop(Player1,Player2) :-
 
 %Displays the result after ending the game
 endGame:-
-    state(Player,Board),
+    winner(Player),
     write('3 in a row!\n'),
-    (Player =:= 1 -> Winner is 2; Winner is 1),
-    write(Winner),
+    write(Player),
     write(' Wins the Game!').
