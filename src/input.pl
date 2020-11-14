@@ -98,7 +98,7 @@ checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid):-
 checkAll(Board,Piece):-
     checkAllRowsCols(7,7,Board,Piece).
 
-threeInRowLeftDiagonal(0,_,_,_,_).
+threeInRowLeftDiagonal(0,_,_,_,Piece):-assert(winner(Piece)).
 
 threeInRowLeftDiagonal(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -110,7 +110,7 @@ threeInRowLeftDiagonal(Counter,Row,Col,Board,Piece):-
     threeInRowLeftDiagonal(NewCounter,NewRow,NewCol,Board,Piece),
     !.
 
-threeInRowRightDiagonal(0,_,_,_,_).
+threeInRowRightDiagonal(0,_,_,_,Piece):-assert(winner(Piece)).
 
 threeInRowRightDiagonal(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -122,7 +122,7 @@ threeInRowRightDiagonal(Counter,Row,Col,Board,Piece):-
     threeInRowRightDiagonal(NewCounter,NewRow,NewCol,Board,Piece),
     !.
 
-threeInRowColumn(0,_,_,_,_).
+threeInRowColumn(0,_,_,_,Piece):-assert(winner(Piece)).
 
 threeInRowColumn(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -133,7 +133,7 @@ threeInRowColumn(Counter,Row,Col,Board,Piece):-
     threeInRowColumn(NewCounter,NewRow,Col,Board,Piece),
     !.
 
-threeInRowRow(0,_,_,_,_).
+threeInRowRow(0,_,_,_,Piece):-assert(winner(Piece)).
 
 threeInRowRow(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -427,7 +427,25 @@ checkLefttRow(N,Row,Column,P,Board,UpdatedBoard):-
     NewCol is Column-1,
     NewCol =< 0,
     UpdatedBoard = Board.
-    
+
+
+checkNumberPieces(0,_,_,Piece,_):-assert(winner(Piece)).
+
+checkNumberPieces(Counter,Row,Column,Piece,Board):-
+    Column > 0,
+    Row > 0,
+    getSquarePiece(Column,Row,P,Board),
+    (P=:=Piece->NewCounter is Counter-1;
+        NewCounter = Counter),
+    NewColumn is Column-1,
+    checkNumberPieces(NewCounter,Row,NewColumn,Piece,Board).
+
+checkNumberPieces(Counter,Row,Column,Piece,Board):-
+    Column =< 0,
+    NewColumn is 6,
+    NewRow is Row -1,
+    checkNumberPieces(Counter,NewRow,NewColumn,Piece,Board).
+
 
 repulsion(Row,Column,P,Board,UpdatedBoard):-
     checkTopLeftDiagonal(1,Row,Column,P,Board,UpdatedBoard1),
@@ -442,8 +460,7 @@ repulsion(Row,Column,P,Board,UpdatedBoard):-
 
 %Checks if the game is over, not implemented yet
 checkGameOver(Board):- 
-    retract(winner(Player)),
-    assert(winner(1)),
+    checkNumberPieces(8,6,6,1,Board);
+    checkNumberPieces(8,6,6,2,Board);
     checkAll(Board,1);
-    assert(winner(2)),
     checkAll(Board,2).

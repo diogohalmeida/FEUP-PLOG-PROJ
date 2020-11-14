@@ -49,5 +49,7 @@ gameLoop(Player1,Player2) :-
 endGame:-
     winner(Player),
     write('3 in a row!\n'),
-    write(Player),
+    (Player=:= 1->write('Black');
+    write('Red')
+    ),
     write(' Wins the Game!').
