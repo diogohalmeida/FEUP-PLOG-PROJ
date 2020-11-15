@@ -2,7 +2,6 @@
 
 %Starts the game
 start :-
-    initial(GameState),
     gameLoop('Pedro','Diogo').
 
 %Sets up the initial board
@@ -25,9 +24,6 @@ display_game(GameState,Player):-
         nl    
     ).
 
-%Predicates that help implementing the game loop 
-repeat.
-repeat:-repeat.
 
 %Implements the game loop, correctly assigning the turn for each player, updating the board and checking game over. 
 %The game loop ends when the this predicate detects game over (checkGameOver is true)

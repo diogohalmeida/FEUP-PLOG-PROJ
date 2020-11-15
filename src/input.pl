@@ -10,7 +10,7 @@ playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
         (
             Valid =:= 1,
             putPiece(Board, Row, Column, Player, UpdatedBoard1),
-            repulsion(Row, Column, Player, UpdatedBoard1,UpdatedBoard)
+            repulsion(Row, Column, UpdatedBoard1,UpdatedBoard)
         )         
     ),
     (
@@ -63,6 +63,7 @@ readRow(CheckedRow) :-
     write('Row:\n'),
     read(Row),
     checkRow(Row, CheckedRow).
+
 
 %Prompts user input for the column and reads it
 readColumn(CheckedColumn) :-
@@ -165,16 +166,17 @@ checkAllRowsCols(Row,Col,Board,Piece):-
     checkAllRowsCols(Row,NextCol,Board,Piece).
 
 
-checkTopLeftDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkTopLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewCol is Column-1,
     NewRow > 0,
     NewCol > 0,
+    getSquarePiece(Row,Column,Piece,Board),
     getSquarePiece(NewCol,NewRow,P,Board),
     (P==0->putPiece(Board,NewRow,NewCol,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkTopLeftDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkTopLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewRow =< 0,
     putPiece(Board,Row,Column,0,UpdatedBoard);
@@ -182,7 +184,7 @@ checkTopLeftDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
     NewCol =< 0,
     putPiece(Board,Row,Column,0,UpdatedBoard).
 
-checkTopLeftDiagonal(N,Row,Column,Piece,Board,UpdatedBoard):-
+checkTopLeftDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row-1,
     NewRow =< 0,
@@ -190,9 +192,8 @@ checkTopLeftDiagonal(N,Row,Column,Piece,Board,UpdatedBoard):-
     NewCol is Column-1,
     NewCol =< 0,
     UpdatedBoard = Board.
-    %putPiece(Board,Row,Column,Piece,UpdatedBoard).
 
-checkTopLeftDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
+checkTopLeftDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row-1,
     NewCol is Column-1,
@@ -204,44 +205,47 @@ checkTopLeftDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
     checkTopLeftDiagonal(NewN,NewRow,NewCol,Piece,Board,UpdatedBoard)).
 
 
-checkUpperColumn(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkUpperColumn(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewRow > 0,
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(Column,NewRow,P,Board),
     (P==0->putPiece(Board,NewRow,Column,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkUpperColumn(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkUpperColumn(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewRow =< 0,
     putPiece(Board,Row,Column,0,UpdatedBoard).
 
-checkUpperColumn(N,Row,Column,P,Board,UpdatedBoard):-
+checkUpperColumn(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row-1,
     NewRow > 0,
     NewN is N-1,
     getSquarePiece(Column,NewRow,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkUpperColumn(NewN,NewRow,Column,Piece,Board,UpdatedBoard)).
+    checkUpperColumn(NewN,NewRow,Column,Board,UpdatedBoard)).
 
-checkUpperColumn(N,Row,Column,Piece,Board,UpdatedBoard):-
+checkUpperColumn(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row-1,
     NewRow =< 0,
+    Column > 0,
     UpdatedBoard = Board.
 
 
-checkTopRightDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkTopRightDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewRow > 0,
     NewCol is Column+1,
     NewCol < 7,
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(NewCol,NewRow,P,Board),
     (P==0->putPiece(Board,NewRow,NewCol,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkTopRightDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkTopRightDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewRow =< 0,
     putPiece(Board,Row,Column,0,UpdatedBoard);
@@ -250,7 +254,7 @@ checkTopRightDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
     putPiece(Board,Row,Column,0,UpdatedBoard).
     
 
-checkTopRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
+checkTopRightDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row-1,
     NewCol is Column+1,
@@ -259,10 +263,10 @@ checkTopRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
     NewN is N-1,
     getSquarePiece(NewCol,NewRow,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkTopRightDiagonal(NewN,NewRow,NewCol,Piece,Board,UpdatedBoard)).
+    checkTopRightDiagonal(NewN,NewRow,NewCol,Board,UpdatedBoard)).
 
 
-checkTopRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
+checkTopRightDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row-1,
     NewRow =< 0,
@@ -272,43 +276,46 @@ checkTopRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
     UpdatedBoard = Board.
 
 
-checkRightRow(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkRightRow(0,Row,Column,Board,UpdatedBoard):-
     NewCol is Column+1,
     NewCol < 7,
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(NewCol,Row,P,Board),
     (P==0->putPiece(Board,Row,NewCol,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkRightRow(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkRightRow(0,Row,Column,Board,UpdatedBoard):-
     NewCol is Column+1,
     NewCol >= 7,
     putPiece(Board,Row,Column,0,UpdatedBoard).
 
-checkRightRow(N,Row,Column,P,Board,UpdatedBoard):-
+checkRightRow(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewCol is Column+1,
     NewCol < 7,
     NewN is N-1,
     getSquarePiece(NewCol,Row,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkRightRow(NewN,Row,NewCol,Piece,Board,UpdatedBoard)).
+    checkRightRow(NewN,Row,NewCol,Board,UpdatedBoard)).
 
-checkRightRow(N,Row,Column,P,Board,UpdatedBoard):-
+checkRightRow(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewCol is Column+1,
     NewCol >= 7,
+    Row > 0,
     UpdatedBoard = Board.
 
-checkBottomRightDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkBottomRightDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow < 7,
     NewCol is Column+1,
     NewCol < 7,
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(NewCol,NewRow,P,Board),
     (P==0->putPiece(Board,NewRow,NewCol,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkBottomRightDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkBottomRightDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow >= 7,
     putPiece(Board,Row,Column,0,UpdatedBoard);
@@ -316,7 +323,7 @@ checkBottomRightDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
     NewCol >= 7,
     putPiece(Board,Row,Column,0,UpdatedBoard).
 
-checkBottomRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
+checkBottomRightDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row+1,
     NewRow < 7,
@@ -325,9 +332,9 @@ checkBottomRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
     NewN is N-1,
     getSquarePiece(NewCol,NewRow,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkBottomRightDiagonal(NewN,NewRow,NewCol,Piece,Board,UpdatedBoard)).
+    checkBottomRightDiagonal(NewN,NewRow,NewCol,Board,UpdatedBoard)).
 
-checkBottomRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
+checkBottomRightDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row+1,
     NewRow >= 7,
@@ -336,43 +343,46 @@ checkBottomRightDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
     NewCol >= 7,
     UpdatedBoard = Board.
 
-checkBottomColumn(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkBottomColumn(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow < 7,
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(Column,NewRow,P,Board),
     (P==0->putPiece(Board,NewRow,Column,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkBottomColumn(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkBottomColumn(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow >= 7,
     putPiece(Board,Row,Column,0,UpdatedBoard).
 
-checkBottomColumn(N,Row,Column,P,Board,UpdatedBoard):-
+checkBottomColumn(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row+1,
     NewRow < 7,
     NewN is N-1,
     getSquarePiece(Column,NewRow,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkBottomColumn(NewN,NewRow,Column,Piece,Board,UpdatedBoard)).
+    checkBottomColumn(NewN,NewRow,Column,Board,UpdatedBoard)).
 
-checkBottomColumn(N,Row,Column,P,Board,UpdatedBoard):-
+checkBottomColumn(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row+1,
     NewRow >= 7,
+    Column > 0,
     UpdatedBoard = Board.
 
-checkBottomLeftDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkBottomLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow < 7,
     NewCol is Column-1,
     NewCol > 0,
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(NewCol,NewRow,P,Board),
     (P==0->putPiece(Board,NewRow,NewCol,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkBottomLeftDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkBottomLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow >= 7,
     putPiece(Board,Row,Column,0,UpdatedBoard);
@@ -380,7 +390,7 @@ checkBottomLeftDiagonal(0,Row,Column,Piece,Board,UpdatedBoard):-
     NewCol =< 0,
     putPiece(Board,Row,Column,0,UpdatedBoard).
 
-checkBottomLeftDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
+checkBottomLeftDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row+1,
     NewRow < 7,
@@ -389,9 +399,9 @@ checkBottomLeftDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
     NewN is N-1,
     getSquarePiece(NewCol,NewRow,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkBottomLeftDiagonal(NewN,NewRow,NewCol,Piece,Board,UpdatedBoard)).
+    checkBottomLeftDiagonal(NewN,NewRow,NewCol,Board,UpdatedBoard)).
 
-checkBottomLeftDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
+checkBottomLeftDiagonal(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewRow is Row+1,
     NewRow >= 7,
@@ -401,31 +411,33 @@ checkBottomLeftDiagonal(N,Row,Column,P,Board,UpdatedBoard):-
     UpdatedBoard = Board.
 
 
-checkLefttRow(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkLefttRow(0,Row,Column,Board,UpdatedBoard):-
     NewCol is Column-1,
     NewCol > 0,
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(NewCol,Row,P,Board),
     (P==0->putPiece(Board,Row,NewCol,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
-checkLefttRow(0,Row,Column,Piece,Board,UpdatedBoard):-
+checkLefttRow(0,Row,Column,Board,UpdatedBoard):-
     NewCol is Column-1,
     NewCol =< 0,
     putPiece(Board,Row,Column,0,UpdatedBoard).
 
-checkLefttRow(N,Row,Column,P,Board,UpdatedBoard):-
+checkLefttRow(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewCol is Column-1,
     NewCol > 0,
     NewN is N-1,
     getSquarePiece(NewCol,Row,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkLefttRow(NewN,Row,NewCol,Piece,Board,UpdatedBoard)).
+    checkLefttRow(NewN,Row,NewCol,Board,UpdatedBoard)).
 
-checkLefttRow(N,Row,Column,P,Board,UpdatedBoard):-
+checkLefttRow(N,Row,Column,Board,UpdatedBoard):-
     N > 0,
     NewCol is Column-1,
     NewCol =< 0,
+    Row > 0,
     UpdatedBoard = Board.
 
 
@@ -447,15 +459,15 @@ checkNumberPieces(Counter,Row,Column,Piece,Board):-
     checkNumberPieces(Counter,NewRow,NewColumn,Piece,Board).
 
 
-repulsion(Row,Column,P,Board,UpdatedBoard):-
-    checkTopLeftDiagonal(1,Row,Column,P,Board,UpdatedBoard1),
-    checkUpperColumn(1,Row,Column,P,UpdatedBoard1,UpdatedBoard2),
-    checkTopRightDiagonal(1,Row,Column,P,UpdatedBoard2,UpdatedBoard3),
-    checkRightRow(1,Row,Column,P,UpdatedBoard3,UpdatedBoard4),
-    checkBottomRightDiagonal(1,Row,Column,P,UpdatedBoard4,UpdatedBoard5),
-    checkBottomColumn(1,Row,Column,P,UpdatedBoard5,UpdatedBoard6),
-    checkBottomLeftDiagonal(1,Row,Column,P,UpdatedBoard6,UpdatedBoard7),
-    checkLefttRow(1,Row,Column,P,UpdatedBoard7,UpdatedBoard).
+repulsion(Row,Column,Board,UpdatedBoard):-
+    checkTopLeftDiagonal(1,Row,Column,Board,UpdatedBoard1),
+    checkUpperColumn(1,Row,Column,UpdatedBoard1,UpdatedBoard2),
+    checkTopRightDiagonal(1,Row,Column,UpdatedBoard2,UpdatedBoard3),
+    checkRightRow(1,Row,Column,UpdatedBoard3,UpdatedBoard4),
+    checkBottomRightDiagonal(1,Row,Column,UpdatedBoard4,UpdatedBoard5),
+    checkBottomColumn(1,Row,Column,UpdatedBoard5,UpdatedBoard6),
+    checkBottomLeftDiagonal(1,Row,Column,UpdatedBoard6,UpdatedBoard7),
+    checkLefttRow(1,Row,Column,UpdatedBoard7,UpdatedBoard).
 
 
 %Checks if the game is over, not implemented yet
