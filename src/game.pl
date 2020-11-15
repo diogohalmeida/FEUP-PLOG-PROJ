@@ -1,5 +1,9 @@
 :-dynamic(state/2).
 
+startMenu:-
+    printMainMenu,
+    readMenuOption.
+
 %Starts the game
 start :-
     gameLoop('Pedro','Diogo').
@@ -37,15 +41,16 @@ gameLoop(Player1,Player2) :-
         once(display_game(Board,Player)),
         once(playPiece(Player,Board,NextPlayer,UpdatedBoard)),
         assert(state(NextPlayer,UpdatedBoard)),
-        checkGameOver(UpdatedBoard),                                    % checkGameOver is not implemented yet, it currently returns fail so the loop can be infinitely running
+        checkGameOver(UpdatedBoard),                                    % checkGameOver is not implemented yet, it currently returns fail so the loop can be infinitely running 
     print_board(UpdatedBoard),
     endGame.
 
 %Displays the result after ending the game
 endGame:-
-    winner(Player),
+    retract(winner(Player)),
     write('3 in a row!\n'),
     (Player=:= 1->write('Black');
     write('Red')
     ),
-    write(' Wins the Game!').
+    write(' Wins the Game!\n'),
+    startMenu.

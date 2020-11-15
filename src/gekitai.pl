@@ -8,4 +8,4 @@
 
 %Main predicate
 play :-
-    start. 
+    startMenu.

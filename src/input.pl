@@ -1,18 +1,13 @@
 %Reads where the player wants to play the piece and checks if that position is occupied.
-%If it isn't it calls the predicate putPiece to execute the play. If it is, Valid = 0 and playPiece is called again for a valid position.
+%If it isn't it calls the predicate putPiece to execute the play. If it is, repeat the input
 %After the play is done it also updates the next player to play.
 playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
-    readColumn(Column),
-    readRow(Row),
-    checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard1, Valid),
-    (
-        Valid =:= 0;
-        (
-            Valid =:= 1,
-            putPiece(Board, Row, Column, Player, UpdatedBoard1),
-            repulsion(Row, Column, UpdatedBoard1,UpdatedBoard)
-        )         
-    ),
+    repeat,
+        once(readColumn(Column)),
+        once(readRow(Row)),
+        checkOccupied(Column, Row, Board),
+    putPiece(Board, Row, Column, Player, UpdatedBoard1),
+    repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),       
     (
         (
             Player =:= 1,
@@ -72,28 +67,23 @@ readColumn(CheckedColumn) :-
     checkColumn(Column, CheckedColumn).
 
 %Verifies if a cell is already occupied for another piece
-%If it is, warn the user, do Valid = 0 and call playPiece again for another input
-%If it isn't, Valid = 1
-checkOccupied(Column, Row, Board, Player, NextPlayer, UpdatedBoard, Valid):-
+%If it is repeat the input
+checkOccupied(Column, Row, Board):-
     getSquarePiece(Column, Row, Content, Board),
-    (
-        (
-            Content =:= 0,
-            Valid is 1
-        );
-        (
-            Content =:= 1,
-            write('Square occupied by Black!\nSelect again:\n'),
-            Valid is 0,
-            playPiece(Player,Board, NextPlayer, UpdatedBoard)
-        );
-        (
-            Content =:= 2,
-            write('Square occupied by Red!\nSelect again:\n'),
-            Valid is 0,
-            playPiece(Player,Board, NextPlayer, UpdatedBoard)
-        )
-    ).  
+    Content =:= 0.
+
+checkOccupied(Column, Row, Board):-
+    getSquarePiece(Column, Row, Content, Board),
+    Content =:= 1,
+    write('Square occupied by Black!\nSelect again:\n'),
+    fail.
+
+checkOccupied(Column, Row, Board):-
+    getSquarePiece(Column, Row, Content, Board),
+    Content =:= 2,
+    write('Square occupied by Red!\nSelect again:\n'),
+    fail.
+
 
 
 checkAll(Board,Piece):-
@@ -476,3 +466,25 @@ checkGameOver(Board):-
     checkNumberPieces(8,6,6,2,Board);
     checkAll(Board,1);
     checkAll(Board,2).
+
+
+readMenuOption:-
+    repeat,
+        write('Select the desired mode:\n'),
+        once(read(Option)),
+        checkMenuOption(Option),
+    runOption(Option).
+
+checkMenuOption(Option):-
+    Option >= 0,
+    Option =< 3.
+
+checkMenuOption(_):-
+    write('Invalid Option!\nTry Again:\n'),
+    fail.
+
+runOption(0):-
+    write('\nExiting game...\n').
+
+runOption(1):-
+    start.
