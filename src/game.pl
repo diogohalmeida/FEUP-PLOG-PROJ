@@ -33,8 +33,8 @@ display_game(GameState,Player):-
 %The game loop ends when the this predicate detects game over (checkGameOver is true)
 gameLoop(Player1,Player2) :-
     initial(InitialBoard),
-    assert(move(1,Player1)),
-    assert(move(2,Player2)),
+    %assert(move(1,Player1)),
+    %assert(move(2,Player2)),
     assert(state(1,InitialBoard)),
     repeat,
         retract(state(Player,Board)),
@@ -43,7 +43,33 @@ gameLoop(Player1,Player2) :-
         assert(state(NextPlayer,UpdatedBoard)),
         checkGameOver(UpdatedBoard),                                    % checkGameOver is not implemented yet, it currently returns fail so the loop can be infinitely running 
     print_board(UpdatedBoard),
+    retract(state(_,_)),
     endGame.
+
+choose([], []).
+choose(List, Elt) :-
+    length(List, Length),
+    random(0, Length, Index),
+    nth0(Index, List, Elt).
+
+
+gameLoopPc:-
+    initial(InitialBoard),
+    assert(state(1,InitialBoard)),
+    repeat,
+        retract(state(Player,Board)),
+        once(display_game(Board,Player)),
+        findall(UpdatedBoard,move(Player,Board,UpdatedBoard),ListUpdatedBoard),
+        choose(ListUpdatedBoard,BoardChoosen),
+        (Player=:=1->NextPlayer is 2;
+            NextPlayer is 1    
+        ),
+        assert(state(NextPlayer,BoardChoosen)),
+        checkGameOver(BoardChoosen),
+    print_board(BoardChoosen),
+    retract(state(_,_)),
+    endGame.
+    
 
 %Displays the result after ending the game
 endGame:-

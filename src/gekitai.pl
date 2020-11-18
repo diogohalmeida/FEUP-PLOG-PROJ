@@ -4,6 +4,7 @@
 :- consult('game.pl').
 :- consult('utils.pl').
 :-use_module(library(lists)).
+:-use_module(library(random)).
 
 
 %Main predicate

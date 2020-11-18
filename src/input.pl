@@ -161,9 +161,9 @@ checkTopLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewCol is Column-1,
     NewRow > 0,
     NewCol > 0,
-    getSquarePiece(Row,Column,Piece,Board),
+    getSquarePiece(Column,Row,Piece,Board),
     getSquarePiece(NewCol,NewRow,P,Board),
-    (P==0->putPiece(Board,NewRow,NewCol,Piece,UpdatedBoard1), putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
+    (P==0->putPiece(Board,NewRow,NewCol,Piece,UpdatedBoard1),putPiece(UpdatedBoard1,Row,Column,0,UpdatedBoard);
     UpdatedBoard = Board).
 
 checkTopLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
@@ -192,7 +192,7 @@ checkTopLeftDiagonal(N,Row,Column,Board,UpdatedBoard):-
     NewN is N-1,
     getSquarePiece(NewCol,NewRow,Piece,Board),
     (Piece==0->UpdatedBoard = Board;
-    checkTopLeftDiagonal(NewN,NewRow,NewCol,Piece,Board,UpdatedBoard)).
+    checkTopLeftDiagonal(NewN,NewRow,NewCol,Board,UpdatedBoard)).
 
 
 checkUpperColumn(0,Row,Column,Board,UpdatedBoard):-
@@ -466,6 +466,39 @@ checkGameOver(Board):-
     checkNumberPieces(8,6,6,2,Board);
     checkAll(Board,1);
     checkAll(Board,2).
+
+
+newPosition(InputRow,InputColumn,OutputRow,OutputColumn):- 
+    OutputRow is InputRow, 
+    OutputColumn is InputColumn.
+
+newPosition(InputRow,InputColumn,OutputRow,OutputColumn):-
+    InputColumn < 7,
+    InputRow < 7,
+    NewInputColumn is InputColumn + 1,
+    newPosition(InputRow,NewInputColumn,OutputRow,OutputColumn).
+
+newPosition(InputRow,InputColumn,OutputRow,OutputColumn):-
+    InputColumn >= 7,
+    InputRow < 7,
+    NewInputColumn is 1,
+    NewInputRow is InputRow + 1,
+    newPosition(NewInputRow,NewInputColumn,OutputRow,OutputColumn).
+
+valid(Player,Column, Row, Board,UpdatedBoard):-
+    getSquarePiece(Column, Row, Content, Board),
+    Content =:= 0,
+    putPiece(Board, Row, Column, Player, UpdatedBoard1),
+    repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),
+    !.
+
+move(Player,Board,UpdatedBoard):-
+    newPosition(1,1,OutputRow,OutputColumn),
+    valid(Player,OutputColumn, OutputRow, Board, UpdatedBoard). %colocar um cut no final do predicado
+
+    %usar o predicado built in findall
+
+
 
 
 readMenuOption:-
