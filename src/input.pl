@@ -7,8 +7,9 @@ playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
         once(readRow(Row)),
         checkOccupied(Column, Row, Board),
     putPiece(Board, Row, Column, Player, UpdatedBoard1),
-    repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),       
-    (
+    repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),
+    player(Player,NextPlayer).      
+    /*(
         (
             Player =:= 1,
             NextPlayer is 2
@@ -17,10 +18,12 @@ playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
             Player =:= 2,
             NextPlayer is 1
         )
-    ).
+    ).*/
+
+
 
 %Predicates that convert the user input to the number of the column
-checkColumn('A', CheckedColumn) :-
+/*checkColumn('A', CheckedColumn) :-
     CheckedColumn=1.
 checkColumn('B', CheckedColumn) :-
     CheckedColumn=2.
@@ -34,10 +37,20 @@ checkColumn('F', CheckedColumn) :-
     CheckedColumn=6.
 checkColumn(_Column, CheckedColumn) :-
     write('Invalid Column!\nSelect again:\n'),
+    readColumn(CheckedColumn).*/
+
+checkColumn('A', 1).
+checkColumn('B', 2).
+checkColumn('C', 3).
+checkColumn('D', 4).
+checkColumn('E', 5).
+checkColumn('F', 6).
+checkColumn(_Column, CheckedColumn) :-
+    write('Invalid Column!\nSelect again:\n'),
     readColumn(CheckedColumn).
 
 %Predicates that convert the user input to the number of the row
-checkRow(1, CheckedRow) :-
+/*checkRow(1, CheckedRow) :-
     CheckedRow=1.
 checkRow(2, CheckedRow) :-
     CheckedRow=2.
@@ -49,6 +62,16 @@ checkRow(5, CheckedRow) :-
     CheckedRow=5.
 checkRow(6, CheckedRow) :-
     CheckedRow=6.
+checkRow(_Row, CheckedRow) :-
+    write('Invalid Row!\nSelect again:\n'),
+    readRow(CheckedRow).*/
+
+checkRow(1, 1).
+checkRow(2, 2).
+checkRow(3, 3).
+checkRow(4, 4).
+checkRow(5, 5).
+checkRow(6, 6).
 checkRow(_Row, CheckedRow) :-
     write('Invalid Row!\nSelect again:\n'),
     readRow(CheckedRow).
@@ -89,7 +112,7 @@ checkOccupied(Column, Row, Board):-
 checkAll(Board,Piece):-
     checkAllRowsCols(7,7,Board,Piece).
 
-threeInRowLeftDiagonal(0,_,_,_,Piece):-assert(winner(Piece)).
+threeInRowLeftDiagonal(0,_,_,_,_).
 
 threeInRowLeftDiagonal(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -101,7 +124,7 @@ threeInRowLeftDiagonal(Counter,Row,Col,Board,Piece):-
     threeInRowLeftDiagonal(NewCounter,NewRow,NewCol,Board,Piece),
     !.
 
-threeInRowRightDiagonal(0,_,_,_,Piece):-assert(winner(Piece)).
+threeInRowRightDiagonal(0,_,_,_,_).
 
 threeInRowRightDiagonal(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -113,7 +136,7 @@ threeInRowRightDiagonal(Counter,Row,Col,Board,Piece):-
     threeInRowRightDiagonal(NewCounter,NewRow,NewCol,Board,Piece),
     !.
 
-threeInRowColumn(0,_,_,_,Piece):-assert(winner(Piece)).
+threeInRowColumn(0,_,_,_,_).
 
 threeInRowColumn(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -124,7 +147,7 @@ threeInRowColumn(Counter,Row,Col,Board,Piece):-
     threeInRowColumn(NewCounter,NewRow,Col,Board,Piece),
     !.
 
-threeInRowRow(0,_,_,_,Piece):-assert(winner(Piece)).
+threeInRowRow(0,_,_,_,_).
 
 threeInRowRow(Counter,Row,Col,Board,Piece):-
     Row < 7,
@@ -431,7 +454,7 @@ checkLefttRow(N,Row,Column,Board,UpdatedBoard):-
     UpdatedBoard = Board.
 
 
-checkNumberPieces(0,_,_,Piece,_):-assert(winner(Piece)).
+checkNumberPieces(0,_,_,_,_).
 
 checkNumberPieces(Counter,Row,Column,Piece,Board):-
     Column > 0,
@@ -462,10 +485,22 @@ repulsion(Row,Column,Board,UpdatedBoard):-
 
 %Checks if the game is over, not implemented yet
 checkGameOver(Board):- 
-    checkNumberPieces(8,6,6,1,Board);
-    checkNumberPieces(8,6,6,2,Board);
-    checkAll(Board,1);
-    checkAll(Board,2).
+    (
+        checkNumberPieces(8,6,6,1,Board),
+        assert(winner(1))
+    );
+    (
+        checkNumberPieces(8,6,6,2,Board),
+        assert(winner(2))
+    );
+    (
+        checkAll(Board,1),
+        assert(winner(1))
+    );
+    (
+        checkAll(Board,2),
+        assert(winner(2))
+    ).
 
 
 newPosition(InputRow,InputColumn,OutputRow,OutputColumn):- 
@@ -486,18 +521,215 @@ newPosition(InputRow,InputColumn,OutputRow,OutputColumn):-
     newPosition(NewInputRow,NewInputColumn,OutputRow,OutputColumn).
 
 valid(Player,Column, Row, Board,UpdatedBoard):-
-    getSquarePiece(Column, Row, Content, Board),
-    Content =:= 0,
+    getSquarePiece(Column, Row, 0, Board),
     putPiece(Board, Row, Column, Player, UpdatedBoard1),
     repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),
     !.
 
-move(Player,Board,UpdatedBoard):-
-    newPosition(1,1,OutputRow,OutputColumn),
-    valid(Player,OutputColumn, OutputRow, Board, UpdatedBoard). %colocar um cut no final do predicado
+move(Player,Board,Row,Column,UpdatedBoard):-
+    newPosition(1,1,Row,Column),
+    valid(Player,Column, Row, Board, UpdatedBoard). 
 
-    %usar o predicado built in findall
+%parseBoards([],Aux,Aux1,VictoryBoards,OtherBoards,_):- VictoryBoards = Aux, OtherBoards = Aux1.
 
+/*parseBoards(AllBoards,VictoryBoards,NotLoosingBoards,PossibleWinningBoards,Player):-
+    (
+        Player=:=1->NextPlayer is 2;
+        NextPlayer is 1   
+    ),
+    findWinningBoards(AllBoards,Player,[],VictoryBoards),
+    findNotLosingBoards(AllBoards,NextPlayer,[],NotLoosingBoards),
+    findPossibleWinningBoards(AllBoards,Player,[],PossibleWinningBoards),!.
+*/
+
+pointsForPiecesOnBoard(_,0,6,_,FinalPoints,FinalPoints).
+
+
+pointsForPiecesOnBoard(Board,Row,Column,Player,Points,FinalPoints):-
+    Column =< 0,
+    Row > 0,
+    NewColumn is 6,
+    NewRow is Row-1,
+    pointsForPiecesOnBoard(Board,NewRow,NewColumn,Player,Points,FinalPoints).
+
+
+pointsForPiecesOnBoard(Board,Row,Column,Player,Points,FinalPoints):-
+    Row > 0,
+    Column > 0,
+    getSquarePiece(Column,Row,Piece,Board),
+    (
+         Piece=:=Player-> NewPoints is Points+1;
+         NewPoints = Points
+    ),
+    NewColumn is Column-1,
+    pointsForPiecesOnBoard(Board,Row,NewColumn,Player,NewPoints,FinalPoints).
+
+
+
+pointsTwoInRow(_,0,6,_,_,FinalPoints,FinalPoints).
+
+
+pointsTwoInRow(Counter,Row,0,Board,Player,Points,FinalPoints):-
+    Row > 0,
+    NewRow is Row-1,
+    NewColumn is 6,
+    pointsTwoInRow(Counter,NewRow,NewColumn,Board,Player,Points,FinalPoints).
+
+
+
+pointsTwoInRow(Counter,Row,Column,Board,Player,Points,FinalPoints):-
+    Row > 0,
+    Column > 0,
+    (
+        Counter=:=2->NewCounter is 0,NewPoints is Points+1;
+        NewCounter is Counter,NewPoints is Points    
+    ),
+    (
+        getSquarePiece(Column,Row,Player,Board)->UpdatedCounter is NewCounter+1;
+        UpdatedCounter is 0    
+    ),
+    NewColumn is Column-1,
+    pointsTwoInRow(UpdatedCounter,Row,NewColumn,Board,Player,NewPoints,FinalPoints).
+
+
+
+pointsTwoInRowColumn(_,0,6,_,_,FinalPoints,FinalPoints).
+
+
+pointsTwoInRowColumn(Counter,0,Column,Board,Player,Points,FinalPoints):-
+    Column > 0,
+    NewColumn is Column-1,
+    NewRow is 6,
+    pointsTwoInRowColumn(Counter,NewRow,NewColumn,Board,Player,Points,FinalPoints).
+
+
+
+pointsTwoInRowColumn(Counter,Row,Column,Board,Player,Points,FinalPoints):-
+    Row > 0,
+    Column > 0,
+    (
+        Counter=:=2->NewCounter is 0,NewPoints is Points+1;
+        NewCounter is Counter,NewPoints is Points    
+    ),
+    (
+        getSquarePiece(Column,Row,Player,Board)->UpdatedCounter is NewCounter+1;
+        UpdatedCounter is 0    
+    ),
+    NewRow is Row-1,
+    pointsTwoInRowColumn(UpdatedCounter,NewRow,Column,Board,Player,NewPoints,FinalPoints).
+
+
+pointsTwoInRowLeftDiagonal(5,6,_,_,FinalPoints,FinalPoints).
+
+
+pointsTwoInRowLeftDiagonal(Row,Column,Board,Player,Points,FinalPoints):-
+    Column >= 6,
+    Row < 6,
+    NewRow is Row+1,
+    NewColumn is 1,
+    pointsTwoInRowLeftDiagonal(NewRow,NewColumn,Board,Player,Points,FinalPoints).
+
+pointsTwoInRowLeftDiagonal(Row,Column,Board,Player,Points,FinalPoints):-
+    Row < 6,
+    Column < 6,
+    NewRow is Row + 1,
+    NewColumn is Column + 1,
+    getSquarePiece(Column,Row,Piece1,Board),
+    getSquarePiece(NewColumn,NewRow,Piece2,Board),
+    (
+        (Piece1 =:= Player, Piece2=:= Player)->NewPoints is Points+1,pointsTwoInRowLeftDiagonal(Row,NewColumn,Board,Player,NewPoints,FinalPoints);
+        pointsTwoInRowLeftDiagonal(Row,NewColumn,Board,Player,Points,FinalPoints)
+    ).
+
+
+
+pointsTwoInRowRightDiagonal(2,6,_,_,FinalPoints,FinalPoints).
+
+
+pointsTwoInRowRightDiagonal(Row,Column,Board,Player,Points,FinalPoints):-
+    Column >= 6,
+    Row > 1,
+    NewRow is Row-1,
+    NewColumn is 1,
+    pointsTwoInRowRightDiagonal(NewRow,NewColumn,Board,Player,Points,FinalPoints).
+
+pointsTwoInRowRightDiagonal(Row,Column,Board,Player,Points,FinalPoints):-
+    Row > 1,
+    Column < 6,
+    NewRow is Row - 1,
+    NewColumn is Column + 1,
+    getSquarePiece(Column,Row,Piece1,Board),
+    getSquarePiece(NewColumn,NewRow,Piece2,Board),
+    (
+        (Piece1 =:= Player, Piece2=:= Player)->NewPoints is Points+1,pointsTwoInRowRightDiagonal(Row,NewColumn,Board,Player,NewPoints,FinalPoints);
+    pointsTwoInRowRightDiagonal(Row,NewColumn,Board,Player,Points,FinalPoints)
+    ).
+
+
+
+pointsForTwoInRow(Board,Player,Points):-
+    pointsTwoInRow(0,6,6,Board,Player,0,Points1),
+    pointsTwoInRowColumn(0,6,6,Board,Player,0,Points2),
+    pointsTwoInRowLeftDiagonal(1,1,Board,Player,0,Points3),
+    pointsTwoInRowRightDiagonal(6,1,Board,Player,0,Points4),
+    Points is (Points1 + Points2 + Points3 + Points4).
+    
+
+
+
+pointsOfBoards([],FinalListOfBoards,_,FinalListOfBoards).
+
+pointsOfBoards([H|T],ListBoards,Player,FinalListOfBoards):-
+    player(Player,OtherPlayer),
+    /*(
+        Player=:=1->OtherPlayer is 2;
+        OtherPlayer is 1
+    ),*/
+    nth0(0,H,Row),
+    nth0(1,H,Column),
+    nth0(2,H,Board),
+    (
+        checkAll(Board,Player)->Points1 is 100;
+        Points1 is 0
+    ),
+    (
+        checkAll(Board,OtherPlayer)->Points2 is 100;
+        Points2 is 0    
+    ),
+    pointsForPiecesOnBoard(Board,6,6,OtherPlayer,0,Points3),
+    pointsForPiecesOnBoard(Board,6,6,Player,0,Points4),
+    pointsForTwoInRow(Board,OtherPlayer,Points5),
+    pointsForTwoInRow(Board,Player,Points6),
+    Points is Points1-Points2-(2*Points3)+Points4-(20*Points5)+(5*Points6),
+    append(ListBoards,[[Row,Column,Board,Points]],NewListBoards),
+    pointsOfBoards(T,NewListBoards,Player,FinalListOfBoards).
+    
+selectBestBoards(_,[],FinalBestBoards,FinalBestBoards).
+
+selectBestBoards(BestPoints,[H|T],BestBoards,FinalBestBoards):-
+    nth0(3,H,Points),
+    (
+        BestPoints < Points->selectBestBoards(Points,T,[H],FinalBestBoards);
+        (
+            BestPoints=:=Points->append(BestBoards,[H],NewBestBoards),selectBestBoards(BestPoints,T,NewBestBoards,FinalBestBoards);
+            selectBestBoards(BestPoints,T,BestBoards,FinalBestBoards)
+            
+        )
+    ).
+
+
+chooseBestMove(Player,Board,BoardChoosen):-
+    findall([Row,Column,UpdatedBoard],move(Player,Board,Row,Column,UpdatedBoard),ListBoards),
+    pointsOfBoards(ListBoards,[],Player,FinalListOfBoards),
+    selectBestBoards(-200,FinalListOfBoards,[],BestBoards),
+    choose(BestBoards,Element),
+    nth0(0,Element,RowChoosen),
+    nth0(1,Element,ColumnChoosen),
+    nth0(2,Element,BoardChoosen),
+    write('Pc Played in Row: '),
+    write(RowChoosen),nl,
+    write('Pc Played in Column: '),
+    write(ColumnChoosen).
 
 
 

@@ -1,5 +1,8 @@
 :-dynamic(state/2).
 
+player(1,2).
+player(2,1).
+
 startMenu:-
     printMainMenu,
     readMenuOption.
@@ -50,7 +53,7 @@ choose([], []).
 choose(List, Elt) :-
     length(List, Length),
     random(0, Length, Index),
-    nth0(Index, List, Elt).
+    nth0(Index, List, Elt),!.
 
 
 gameLoopPc:-
@@ -59,11 +62,37 @@ gameLoopPc:-
     repeat,
         retract(state(Player,Board)),
         once(display_game(Board,Player)),
-        findall(UpdatedBoard,move(Player,Board,UpdatedBoard),ListUpdatedBoard),
-        choose(ListUpdatedBoard,BoardChoosen),
-        (Player=:=1->NextPlayer is 2;
+        findall([Row,Column,UpdatedBoard],move(Player,Board,Row,Column,UpdatedBoard),ListUpdatedBoard),
+        choose(ListUpdatedBoard,Element),
+        player(Player,NextPlayer),
+        nth0(0,Element,RowChoosen),
+        nth0(1,Element,ColumnChoosen),
+        nth0(2,Element,BoardChoosen),
+        write('Pc Played in Row: '),
+        write(RowChoosen),nl,
+        write('Pc Played in Column: '),
+        write(ColumnChoosen),
+        /*(Player=:=1->NextPlayer is 2;
             NextPlayer is 1    
-        ),
+        ),*/
+        assert(state(NextPlayer,BoardChoosen)),
+        checkGameOver(BoardChoosen),
+    print_board(BoardChoosen),
+    retract(state(_,_)),
+    endGame.
+
+
+gameLoopPc2:-
+    initial(InitialBoard),
+    assert(state(1,InitialBoard)),
+    repeat,
+        retract(state(Player,Board)),
+        once(display_game(Board,Player)),
+        chooseBestMove(Player,Board,BoardChoosen),
+        player(Player,NextPlayer),
+        /*(Player=:=1->NextPlayer is 2;
+            NextPlayer is 1    
+        ),*/
         assert(state(NextPlayer,BoardChoosen)),
         checkGameOver(BoardChoosen),
     print_board(BoardChoosen),
