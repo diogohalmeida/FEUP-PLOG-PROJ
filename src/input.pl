@@ -753,3 +753,38 @@ runOption(0):-
 
 runOption(1):-
     start.
+
+runOption(2):-
+    repeat,
+        printSecondaryMenu,
+        once(read(Option)),
+        checkSecondaryMenuOption(Option),
+    runPlayerVComputerOption(Option).
+    
+
+runOption(3):-
+    repeat,
+        printSecondaryMenu,
+        once(read(Option)),
+        checkSecondaryMenuOption(Option),
+    runComputerVComputerOption(Option).
+
+
+checkSecondaryMenuOption(Option):-
+    Option >= 0,
+    Option =< 2.
+
+checkSecondaryMenuOption(_):-
+    write('Invalid Option!\nTry Again:\n'),
+    fail.
+
+runPlayerVComputerOption(1).
+
+runPlayerVComputerOption(2).
+
+runComputerVComputerOption(1):-
+    gameLoopPc.
+
+runComputerVComputerOption(2):-
+    gameLoopPc2.
+
