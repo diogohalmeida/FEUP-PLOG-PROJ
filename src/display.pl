@@ -45,12 +45,9 @@ print_element(X):-
     write(' |').
 
 %Predicates that replace the internal representation of the pieces for the correct symbols in display 
-print_symbol(2,S):-
-    S=' O'.
-print_symbol(1,S):-
-    S=' X'.
-print_symbol(0,S):-
-    S='  '.
+print_symbol(2,' O').
+print_symbol(1,' X').
+print_symbol(0,'  ').
 
 printMainMenu:-
     write('\n\n _______________________________________________________________________ \n'),
