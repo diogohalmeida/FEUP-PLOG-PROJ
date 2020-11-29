@@ -1,6 +1,6 @@
-# PLOG - TP1
+PLOG - TP1
 
-## Intermediate Report  - Gekitai
+## Final Report  - Gekitai
 
 ### T4_Gekitai3
 
@@ -188,7 +188,7 @@ During the game, each player is prompted to play in their turn by a message that
 
 - Invalid Row or Column - User inputs an out of bounds Row or Column
 
-  <img src=".\img\invalid_column.png" alt="final" style="zoom: 100%;" />
+<img src=".\img\invalid_column.png" alt="final" style="zoom: 100%;" />
 
 <img src=".\img\invalid_row.png" alt="final" style="zoom: 100%;" />
 
@@ -199,12 +199,11 @@ During the game, each player is prompted to play in their turn by a message that
 After starting the program the user is presented with the main menu, where they can select which game mode they want to play:
 
 1. Player vs Player
-
 2. Player vs Computer
-
 3. Computer vs Computer
 
-   <img src=".\img\menu.png" alt="final" style="zoom: 100%;" />
+
+<img src=".\img\menu.png" alt="final" style="zoom: 100%;" />
 
 If the user selects **Player vs Computer** or **Computer vs Computer**, it takes them to another menu, where they can select the Computer's difficulty settings
 
