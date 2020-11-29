@@ -5,13 +5,21 @@ playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
     repeat,
         once(readColumn(Column)),
         once(readRow(Row)),
-        checkOccupied(Column, Row, Board),
+    /*    checkOccupied(Column, Row, Board),
     putPiece(Board, Row, Column, Player, UpdatedBoard1),
-    repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),
+    repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),*/
+    move(Board,[Row,Column,Player],UpdatedBoard),
     player(Player,NextPlayer).      
 
 
-
+move(GameState,Move,NewGameState):-
+    nth0(0,Move,Row),
+    nth0(1,Move,Column),
+    nth0(2,Move,Player),
+    checkOccupied(Column, Row, GameState),
+    putPiece(GameState, Row, Column, Player, UpdatedBoard1),
+    repulsion(Row, Column, UpdatedBoard1,NewGameState).
+    
 
 %Predicates that convert the user input to the number of the column
 checkColumn('A', 1).
@@ -111,11 +119,17 @@ checkSecondaryMenuOption(_):-
     write('Invalid Option!\nTry Again:\n'),
     fail.
 
+runPlayerVComputerOption(0):-
+    startMenu.
+
 runPlayerVComputerOption(1):-
     gameLoop(p,b1).
 
 runPlayerVComputerOption(2):-
     gameLoop(p,b2).
+
+runComputerVComputerOption(0):-
+    startMenu.
 
 runComputerVComputerOption(1):-
     gameLoop(b1,b1).

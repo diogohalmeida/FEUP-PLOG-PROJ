@@ -373,20 +373,20 @@ repulsion(Row,Column,Board,UpdatedBoard):-
 
 
 %Checks if the game is over, not implemented yet
-checkGameOver(Board):- 
+game_over(Board,Winner):- 
     (
         checkNumberPieces(8,6,6,1,Board),
-        assert(winner(1))
+        Winner is 1
     );
     (
         checkNumberPieces(8,6,6,2,Board),
-        assert(winner(2))
+        Winner is 2
     );
     (
         checkAll(Board,1),
-        assert(winner(1))
+        Winner is 1
     );
     (
         checkAll(Board,2),
-        assert(winner(2))
+        Winner is 2
     ).

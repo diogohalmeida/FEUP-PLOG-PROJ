@@ -1,5 +1,16 @@
+choose_move(GameState,Player,b2,Element):-
+    valid_moves(GameState,Player,ListBoards),
+    pointsOfBoards(ListBoards,[],Player,FinalListOfBoards),
+    selectBestBoards(-200,FinalListOfBoards,[],BestBoards),
+    choose(BestBoards,Element).
+
+choose_move(GameState,Player,b1,Element):-
+    valid_moves(GameState,Player,ListUpdatedBoard),
+    choose(ListUpdatedBoard,Element).
+
+
 chooseBestMove(Player,Board,BoardChoosen):-
-    findall([Row,Column,UpdatedBoard],move(Player,Board,Row,Column,UpdatedBoard),ListBoards),
+    valid_moves(Board,Player,ListBoards),
     pointsOfBoards(ListBoards,[],Player,FinalListOfBoards),
     selectBestBoards(-200,FinalListOfBoards,[],BestBoards),
     choose(BestBoards,Element),

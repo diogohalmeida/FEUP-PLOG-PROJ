@@ -26,7 +26,7 @@ valid(Player,Column, Row, Board,UpdatedBoard):-
     repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),
     !.
 
-move(Player,Board,Row,Column,UpdatedBoard):-
+possibleMove(Player,Board,Row,Column,UpdatedBoard):-
     newPosition(1,1,Row,Column),
     valid(Player,Column, Row, Board, UpdatedBoard). 
 
@@ -55,11 +55,10 @@ pointsForPiecesOnBoard(Board,Row,Column,Player,Points,FinalPoints):-
 
 
 
-pointsTwoInRow(_,0,6,_,_,FinalPoints,FinalPoints).
+pointsTwoInRow(_,0,0,_,_,FinalPoints,FinalPoints).
 
 
 pointsTwoInRow(Counter,Row,0,Board,Player,Points,FinalPoints):-
-    Row > 0,
     NewRow is Row-1,
     NewColumn is 6,
     pointsTwoInRow(Counter,NewRow,NewColumn,Board,Player,Points,FinalPoints).
@@ -67,8 +66,6 @@ pointsTwoInRow(Counter,Row,0,Board,Player,Points,FinalPoints):-
 
 
 pointsTwoInRow(Counter,Row,Column,Board,Player,Points,FinalPoints):-
-    Row > 0,
-    Column > 0,
     (
         Counter=:=2->NewCounter is 0,NewPoints is Points+1;
         NewCounter is Counter,NewPoints is Points    
@@ -82,11 +79,10 @@ pointsTwoInRow(Counter,Row,Column,Board,Player,Points,FinalPoints):-
 
 
 
-pointsTwoInRowColumn(_,0,6,_,_,FinalPoints,FinalPoints).
+pointsTwoInRowColumn(_,0,0,_,_,FinalPoints,FinalPoints).
 
 
 pointsTwoInRowColumn(Counter,0,Column,Board,Player,Points,FinalPoints):-
-    Column > 0,
     NewColumn is Column-1,
     NewRow is 6,
     pointsTwoInRowColumn(Counter,NewRow,NewColumn,Board,Player,Points,FinalPoints).
@@ -94,8 +90,6 @@ pointsTwoInRowColumn(Counter,0,Column,Board,Player,Points,FinalPoints):-
 
 
 pointsTwoInRowColumn(Counter,Row,Column,Board,Player,Points,FinalPoints):-
-    Row > 0,
-    Column > 0,
     (
         Counter=:=2->NewCounter is 0,NewPoints is Points+1;
         NewCounter is Counter,NewPoints is Points    
@@ -106,6 +100,7 @@ pointsTwoInRowColumn(Counter,Row,Column,Board,Player,Points,FinalPoints):-
     ),
     NewRow is Row-1,
     pointsTwoInRowColumn(UpdatedCounter,NewRow,Column,Board,Player,NewPoints,FinalPoints).
+
 
 
 pointsTwoInRowLeftDiagonal(5,6,_,_,FinalPoints,FinalPoints).
@@ -170,7 +165,9 @@ pointsOfBoards([H|T],ListBoards,Player,FinalListOfBoards):-
     nth0(0,H,Row),
     nth0(1,H,Column),
     nth0(2,H,Board),
-    (
+    value(Board,Player,PlayerPoints),
+    value(Board,OtherPlayer,OpponentPoints),
+    /*(
         checkAll(Board,Player)->Points1 is 100;
         Points1 is 0
     ),
@@ -180,11 +177,22 @@ pointsOfBoards([H|T],ListBoards,Player,FinalListOfBoards):-
     ),
     pointsForPiecesOnBoard(Board,6,6,OtherPlayer,0,Points3),
     pointsForPiecesOnBoard(Board,6,6,Player,0,Points4),
+    %write('Row: '),write(Row),write(' Col: '),write(Column),
     pointsForTwoInRow(Board,OtherPlayer,Points5),
     pointsForTwoInRow(Board,Player,Points6),
-    Points is Points1-Points2-(2*Points3)+Points4-(20*Points5)+(5*Points6),
+    Points is Points1-Points2-(2*Points3)+Points4-(20*Points5)+(5*Points6),*/
+    Points is (PlayerPoints - 3*OpponentPoints),
     append(ListBoards,[[Row,Column,Board,Points]],NewListBoards),
     pointsOfBoards(T,NewListBoards,Player,FinalListOfBoards).
+
+value(GameState,Player,Value):-
+    (
+        checkAll(GameState,Player)->Points1 is 100;
+        Points1 is 0
+    ),
+    pointsForPiecesOnBoard(GameState,6,6,Player,0,Points2),
+    pointsForTwoInRow(GameState,Player,Points3),
+    Value is Points1 + Points2 + Points3.
 
 
 selectBestBoards(_,[],FinalBestBoards,FinalBestBoards).
@@ -199,3 +207,12 @@ selectBestBoards(BestPoints,[H|T],BestBoards,FinalBestBoards):-
             
         )
     ).
+
+valid_moves(GameState,Player,ListOfMoves):-
+    findall([Row,Column,UpdatedBoard],possibleMove(Player,GameState,Row,Column,UpdatedBoard),ListOfMoves).
+
+choose([], []).
+choose(List, Elt) :-
+    length(List, Length),
+    random(0, Length, Index),
+    nth0(Index, List, Elt),!.

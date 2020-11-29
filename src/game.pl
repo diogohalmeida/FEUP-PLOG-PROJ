@@ -47,12 +47,6 @@ display_game(GameState,Player):-
     retract(state(_,_)),
     endGame.*/
 
-choose([], []).
-choose(List, Elt) :-
-    length(List, Length),
-    random(0, Length, Index),
-    nth0(Index, List, Elt),!.
-
 
 gameLoop(Mode1,Mode2):-
     initial(InitialBoard),
@@ -65,32 +59,37 @@ gameLoop(Mode1,Mode2):-
         once(choosePlay(FirstMode,Player,Board,NextPlayer,UpdatedBoard)),
         assert(state(NextPlayer,UpdatedBoard)),
         assert(mode(SecondMode,FirstMode)),
-        checkGameOver(UpdatedBoard),
+        game_over(UpdatedBoard,Winner),
     print_board(UpdatedBoard),
     retract(state(_,_)),
     retract(mode(_,_)),
-    endGame.
+    endGame(Winner).
 
 
 playerMove(p,Player,Board,NextPlayer,UpdatedBoard):-
     once(playPiece(Player,Board,NextPlayer,UpdatedBoard)).
 
 playerMove(b1,Player,Board,NextPlayer,UpdatedBoard):-
-    findall([Row,Column,UpdatedBoard],move(Player,Board,Row,Column,UpdatedBoard),ListUpdatedBoard),
-    choose(ListUpdatedBoard,Element),
+    choose_move(Board,Player,b1,Move),
     player(Player,NextPlayer),
-    nth0(0,Element,RowChoosen),
-    nth0(1,Element,ColumnChoosen),
-    nth0(2,Element,UpdatedBoard),
+    nth0(0,Move,RowChoosen),
+    nth0(1,Move,ColumnChoosen),
+    nth0(2,Move,UpdatedBoard),
     write('Pc Played in Row: '),
     write(RowChoosen),nl,
     write('Pc Played in Column: '),
     write(ColumnChoosen).
 
 playerMove(b2,Player,Board,NextPlayer,UpdatedBoard):-
-    chooseBestMove(Player,Board,UpdatedBoard),
-    player(Player,NextPlayer).
-
+    choose_move(Board,Player,b2,Move),
+    player(Player,NextPlayer),
+    nth0(0,Move,RowChoosen),
+    nth0(1,Move,ColumnChoosen),
+    nth0(2,Move,UpdatedBoard),
+    write('Pc Played in Row: '),
+    write(RowChoosen),nl,
+    write('Pc Played in Column: '),
+    write(ColumnChoosen).
 
 choosePlay(FirstMode,Player,Board,NextPlayer,UpdatedBoard):-
     playerMove(FirstMode,Player,Board,NextPlayer,UpdatedBoard).
@@ -135,11 +134,11 @@ gameLoop(b2,b2):-
     
 
 %Displays the result after ending the game
-endGame:-
-    retract(winner(Player)),
-    write('3 in a row!\n'),
-    (Player=:= 1->write('Black');
-    write('Red')
-    ),
-    write(' Wins the Game!\n'),
+endGame(1):-
+    write('Black Wins the Game\n'),
     startMenu.
+
+endGame(2):-
+    write('Red Wins the Game\n'),
+    startMenu.
+
