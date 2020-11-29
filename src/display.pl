@@ -49,6 +49,7 @@ print_symbol(2,' O').
 print_symbol(1,' X').
 print_symbol(0,'  ').
 
+%Predicates that prints the main menu layout 
 printMainMenu:-
     write('\n\n _______________________________________________________________________ \n'),
     write('|                                                                       |\n'),
@@ -75,7 +76,7 @@ printMainMenu:-
     write('|                                                                       |\n'),
     write('|_______________________________________________________________________|\n').
 
-
+%Predicates that prints the difficulty menu layout
 printSecondaryMenu:-
     write('\n\n _______________________________________________________________________ \n'),
     write('|                                                                       |\n'),

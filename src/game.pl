@@ -1,8 +1,10 @@
 :-dynamic(state/2).
 
+%Represent the players
 player(1,2).
 player(2,1).
 
+%Start the menu
 startMenu:-
     printMainMenu,
     readMenuOption.
@@ -31,23 +33,8 @@ display_game(GameState,Player):-
         nl    
     ).
 
-
 %Implements the game loop, correctly assigning the turn for each player, updating the board and checking game over. 
-%The game loop ends when the this predicate detects game over (checkGameOver is true)
-/*gameLoop(p,p) :-
-    initial(InitialBoard),
-    assert(state(1,InitialBoard)),
-    repeat,
-        retract(state(Player,Board)),
-        once(display_game(Board,Player)),
-        once(playPiece(Player,Board,NextPlayer,UpdatedBoard)),
-        assert(state(NextPlayer,UpdatedBoard)),
-        checkGameOver(UpdatedBoard),                                    % checkGameOver is not implemented yet, it currently returns fail so the loop can be infinitely running 
-    print_board(UpdatedBoard),
-    retract(state(_,_)),
-    endGame.*/
-
-
+%The game loop ends when the this predicate detects game over (game_over is true)
 gameLoop(Mode1,Mode2):-
     initial(InitialBoard),
     assert(state(1,InitialBoard)),
@@ -56,7 +43,7 @@ gameLoop(Mode1,Mode2):-
         retract(state(Player,Board)),
         retract(mode(FirstMode,SecondMode)),
         once(display_game(Board,Player)),
-        once(choosePlay(FirstMode,Player,Board,NextPlayer,UpdatedBoard)),
+        once(playerMove(FirstMode,Player,Board,NextPlayer,UpdatedBoard)),
         assert(state(NextPlayer,UpdatedBoard)),
         assert(mode(SecondMode,FirstMode)),
         game_over(UpdatedBoard,Winner),
@@ -66,6 +53,7 @@ gameLoop(Mode1,Mode2):-
     endGame(Winner).
 
 
+%Predicates that execute their respective functions depending on whether they're a player or a computer
 playerMove(p,Player,Board,NextPlayer,UpdatedBoard):-
     once(playPiece(Player,Board,NextPlayer,UpdatedBoard)).
 
@@ -91,47 +79,11 @@ playerMove(b2,Player,Board,NextPlayer,UpdatedBoard):-
     write('Pc Played in Column: '),
     write(ColumnChoosen).
 
+/*
 choosePlay(FirstMode,Player,Board,NextPlayer,UpdatedBoard):-
     playerMove(FirstMode,Player,Board,NextPlayer,UpdatedBoard).
+*/
 
-
-/*gameLoop(b1,b1):-
-    initial(InitialBoard),
-    assert(state(1,InitialBoard)),
-    repeat,
-        retract(state(Player,Board)),
-        once(display_game(Board,Player)),
-        findall([Row,Column,UpdatedBoard],move(Player,Board,Row,Column,UpdatedBoard),ListUpdatedBoard),
-        choose(ListUpdatedBoard,Element),
-        player(Player,NextPlayer),
-        nth0(0,Element,RowChoosen),
-        nth0(1,Element,ColumnChoosen),
-        nth0(2,Element,BoardChoosen),
-        write('Pc Played in Row: '),
-        write(RowChoosen),nl,
-        write('Pc Played in Column: '),
-        write(ColumnChoosen),
-        assert(state(NextPlayer,BoardChoosen)),
-        checkGameOver(BoardChoosen),
-    print_board(BoardChoosen),
-    retract(state(_,_)),
-    endGame.
-
-
-gameLoop(b2,b2):-
-    initial(InitialBoard),
-    assert(state(1,InitialBoard)),
-    repeat,
-        retract(state(Player,Board)),
-        once(display_game(Board,Player)),
-        chooseBestMove(Player,Board,BoardChoosen),
-        player(Player,NextPlayer),
-        assert(state(NextPlayer,BoardChoosen)),
-        checkGameOver(BoardChoosen),
-    print_board(BoardChoosen),
-    retract(state(_,_)),
-    endGame.*/
-    
 
 %Displays the result after ending the game
 endGame(1):-

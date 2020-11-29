@@ -5,6 +5,7 @@ getSquarePiece(Column, Row, Content, GameState) :-
     nth1(Column, SelRow, Content).
 
 
+%Predicates that gets a specific position of the board
 newPosition(OutputRow,OutputColumn,OutputRow,OutputColumn).
 
 newPosition(InputRow,InputColumn,OutputRow,OutputColumn):-
@@ -20,17 +21,22 @@ newPosition(InputRow,InputColumn,OutputRow,OutputColumn):-
     NewInputRow is InputRow + 1,
     newPosition(NewInputRow,NewInputColumn,OutputRow,OutputColumn).
 
+
+%Verifies if a move is valid (square isn't occupied)
 valid(Player,Column, Row, Board,UpdatedBoard):-
     getSquarePiece(Column, Row, 0, Board),
     putPiece(Board, Row, Column, Player, UpdatedBoard1),
     repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),
     !.
 
+
+%Calculates a possible Move returning the resulting Board
 possibleMove(Player,Board,Row,Column,UpdatedBoard):-
     newPosition(1,1,Row,Column),
     valid(Player,Column, Row, Board, UpdatedBoard). 
 
 
+%Calculates the points of a player by counting the number of pieces on the board
 pointsForPiecesOnBoard(_,0,6,_,FinalPoints,FinalPoints).
 
 
@@ -55,6 +61,7 @@ pointsForPiecesOnBoard(Board,Row,Column,Player,Points,FinalPoints):-
 
 
 
+%Calculates the points of a player by counting the number of 2 in-a-row's on a row
 pointsTwoInRow(_,0,0,_,_,FinalPoints,FinalPoints).
 
 
@@ -79,6 +86,7 @@ pointsTwoInRow(Counter,Row,Column,Board,Player,Points,FinalPoints):-
 
 
 
+%Calculates the points of a player by counting the number of 2 in-a-row's on a column
 pointsTwoInRowColumn(_,0,0,_,_,FinalPoints,FinalPoints).
 
 
@@ -102,7 +110,7 @@ pointsTwoInRowColumn(Counter,Row,Column,Board,Player,Points,FinalPoints):-
     pointsTwoInRowColumn(UpdatedCounter,NewRow,Column,Board,Player,NewPoints,FinalPoints).
 
 
-
+%Calculates the points of a player by counting the number of 2 in-a-row's on the left diagonal
 pointsTwoInRowLeftDiagonal(5,6,_,_,FinalPoints,FinalPoints).
 
 
@@ -126,7 +134,7 @@ pointsTwoInRowLeftDiagonal(Row,Column,Board,Player,Points,FinalPoints):-
     ).
 
 
-
+%Calculates the points of a player by counting the number of 2 in-a-row's on the right diagonal
 pointsTwoInRowRightDiagonal(2,6,_,_,FinalPoints,FinalPoints).
 
 
@@ -150,7 +158,7 @@ pointsTwoInRowRightDiagonal(Row,Column,Board,Player,Points,FinalPoints):-
     ).
 
 
-
+%Calculates the points of a player by counting the number of 2 in-a-row's on the board
 pointsForTwoInRow(Board,Player,Points):-
     pointsTwoInRow(0,6,6,Board,Player,0,Points1),
     pointsTwoInRowColumn(0,6,6,Board,Player,0,Points2),
@@ -158,6 +166,8 @@ pointsForTwoInRow(Board,Player,Points):-
     pointsTwoInRowRightDiagonal(6,1,Board,Player,0,Points4),
     Points is (Points1 + Points2 + Points3 + Points4).
 
+
+%Predicates that calculates the points for each board on the List
 pointsOfBoards([],FinalListOfBoards,_,FinalListOfBoards).
 
 pointsOfBoards([H|T],ListBoards,Player,FinalListOfBoards):-
@@ -185,6 +195,8 @@ pointsOfBoards([H|T],ListBoards,Player,FinalListOfBoards):-
     append(ListBoards,[[Row,Column,Board,Points]],NewListBoards),
     pointsOfBoards(T,NewListBoards,Player,FinalListOfBoards).
 
+
+%Calculates the total points of a board
 value(GameState,Player,Value):-
     (
         checkAll(GameState,Player)->Points1 is 100;
@@ -195,6 +207,7 @@ value(GameState,Player,Value):-
     Value is Points1 + Points2 + Points3.
 
 
+%Selects the boards with the best score
 selectBestBoards(_,[],FinalBestBoards,FinalBestBoards).
 
 selectBestBoards(BestPoints,[H|T],BestBoards,FinalBestBoards):-
@@ -208,9 +221,13 @@ selectBestBoards(BestPoints,[H|T],BestBoards,FinalBestBoards):-
         )
     ).
 
+
+%Calculates every resulting Board for every possible move for the given Board and returns it in a List
 valid_moves(GameState,Player,ListOfMoves):-
     findall([Row,Column,UpdatedBoard],possibleMove(Player,GameState,Row,Column,UpdatedBoard),ListOfMoves).
 
+
+%Chooses a random move from a List of moves
 choose([], []).
 choose(List, Elt) :-
     length(List, Length),

@@ -5,13 +5,11 @@ playPiece(Player,Board, NextPlayer, UpdatedBoard) :-
     repeat,
         once(readColumn(Column)),
         once(readRow(Row)),
-    /*    checkOccupied(Column, Row, Board),
-    putPiece(Board, Row, Column, Player, UpdatedBoard1),
-    repulsion(Row, Column, UpdatedBoard1,UpdatedBoard),*/
     move(Board,[Row,Column,Player],UpdatedBoard),
     player(Player,NextPlayer).      
 
 
+%Places a piece on the board and calculates repulsions of adjacent pieces
 move(GameState,Move,NewGameState):-
     nth0(0,Move,Row),
     nth0(1,Move,Column),
@@ -74,6 +72,8 @@ checkOccupied(Column, Row, Board):-
     write('Square occupied by Red!\nSelect again:\n'),
     fail.
 
+
+%Reads a main menu option,verifies if its valid, if it is run the respective option, it it isn't repeat the input
 readMenuOption:-
     repeat,
         write('Select the desired mode:\n'),
@@ -81,14 +81,19 @@ readMenuOption:-
         checkMenuOption(Option),
     runOption(Option).
 
-checkMenuOption(Option):-
-    Option >= 0,
-    Option =< 3.
+
+%Predicates that check every possible option on the main menu
+checkMenuOption(0).
+checkMenuOption(1).
+checkMenuOption(2).
+checkMenuOption(3).
 
 checkMenuOption(_):-
     write('Invalid Option!\nTry Again:\n'),
     fail.
 
+
+%Predicates that run the selected option's respective action
 runOption(0):-
     write('\nExiting game...\n').
 
@@ -96,29 +101,34 @@ runOption(1):-
     start.
 
 runOption(2):-
+    printSecondaryMenu,
     repeat,
-        printSecondaryMenu,
+        write('Select the desired option:\n'),    
         once(read(Option)),
         checkSecondaryMenuOption(Option),
     runPlayerVComputerOption(Option).
     
 
 runOption(3):-
+    printSecondaryMenu,
     repeat,
-        printSecondaryMenu,
+        write('Select the desired option:\n'),
         once(read(Option)),
         checkSecondaryMenuOption(Option),
     runComputerVComputerOption(Option).
 
 
-checkSecondaryMenuOption(Option):-
-    Option >= 0,
-    Option =< 2.
+%Predicates that check every possible option on the difficulty menus
+checkSecondaryMenuOption(0).
+checkSecondaryMenuOption(1).
+checkSecondaryMenuOption(2).
 
 checkSecondaryMenuOption(_):-
     write('Invalid Option!\nTry Again:\n'),
     fail.
 
+
+%Predicates that run the selected option's respective difficulty on the PlayerVComputer menu
 runPlayerVComputerOption(0):-
     startMenu.
 
@@ -128,6 +138,8 @@ runPlayerVComputerOption(1):-
 runPlayerVComputerOption(2):-
     gameLoop(p,b2).
 
+
+%Predicates that run the selected option's respective difficulty on the ComputerVComputer menu
 runComputerVComputerOption(0):-
     startMenu.
 

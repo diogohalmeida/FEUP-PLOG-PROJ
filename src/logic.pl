@@ -1,6 +1,9 @@
+%Verifies if there is a 3 in-a-row on the given board
 checkAll(Board,Piece):-
     checkAllRowsCols(7,7,Board,Piece).
 
+
+%Auxiliary Predicates that check 3 in-a-row in Left Diagonal
 threeInRowLeftDiagonal(0,_,_,_,_).
 
 threeInRowLeftDiagonal(Counter,Row,Col,Board,Piece):-
@@ -13,6 +16,8 @@ threeInRowLeftDiagonal(Counter,Row,Col,Board,Piece):-
     threeInRowLeftDiagonal(NewCounter,NewRow,NewCol,Board,Piece),
     !.
 
+
+%Auxiliary Predicates that check 3 in-a-row in Right Diagonal
 threeInRowRightDiagonal(0,_,_,_,_).
 
 threeInRowRightDiagonal(Counter,Row,Col,Board,Piece):-
@@ -25,6 +30,8 @@ threeInRowRightDiagonal(Counter,Row,Col,Board,Piece):-
     threeInRowRightDiagonal(NewCounter,NewRow,NewCol,Board,Piece),
     !.
 
+
+%Auxiliary Predicates that check 3 in-a-row in a Column
 threeInRowColumn(0,_,_,_,_).
 
 threeInRowColumn(Counter,Row,Col,Board,Piece):-
@@ -36,6 +43,8 @@ threeInRowColumn(Counter,Row,Col,Board,Piece):-
     threeInRowColumn(NewCounter,NewRow,Col,Board,Piece),
     !.
 
+
+%Auxiliary Predicates that check 3 in-a-row in a Row
 threeInRowRow(0,_,_,_,_).
 
 threeInRowRow(Counter,Row,Col,Board,Piece):-
@@ -47,6 +56,8 @@ threeInRowRow(Counter,Row,Col,Board,Piece):-
     threeInRowRow(NewCounter,Row,NewCol,Board,Piece),
     !.
 
+
+%Auxiliary Predicates that check 3 in-a-row
 checkAllRowsCols(Row,Col,Board,Piece):-
     Row > 0,
     Col > 0,
@@ -68,6 +79,7 @@ checkAllRowsCols(Row,Col,Board,Piece):-
     checkAllRowsCols(Row,NextCol,Board,Piece).
 
 
+%Auxiliary Predicates that handle Top Left Diagonal Repulsions
 checkTopLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewCol is Column-1,
@@ -107,6 +119,7 @@ checkTopLeftDiagonal(N,Row,Column,Board,UpdatedBoard):-
     checkTopLeftDiagonal(NewN,NewRow,NewCol,Board,UpdatedBoard)).
 
 
+%Auxiliary Predicates that handle Upper Repulsions
 checkUpperColumn(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewRow > 0,
@@ -137,6 +150,7 @@ checkUpperColumn(N,Row,Column,Board,UpdatedBoard):-
     UpdatedBoard = Board.
 
 
+%Auxiliary Predicates that handle Top Right Diagonal Repulsions
 checkTopRightDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row-1,
     NewRow > 0,
@@ -178,6 +192,7 @@ checkTopRightDiagonal(N,Row,Column,Board,UpdatedBoard):-
     UpdatedBoard = Board.
 
 
+%Auxiliary Predicates that handle Right Repulsions
 checkRightRow(0,Row,Column,Board,UpdatedBoard):-
     NewCol is Column+1,
     NewCol < 7,
@@ -207,6 +222,8 @@ checkRightRow(N,Row,Column,Board,UpdatedBoard):-
     Row > 0,
     UpdatedBoard = Board.
 
+
+%Auxiliary Predicates that handle Bottom Right Diagonal Repulsions
 checkBottomRightDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow < 7,
@@ -245,6 +262,8 @@ checkBottomRightDiagonal(N,Row,Column,Board,UpdatedBoard):-
     NewCol >= 7,
     UpdatedBoard = Board.
 
+
+%Auxiliary Predicates that handle Bottom Repulsions
 checkBottomColumn(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow < 7,
@@ -274,6 +293,8 @@ checkBottomColumn(N,Row,Column,Board,UpdatedBoard):-
     Column > 0,
     UpdatedBoard = Board.
 
+
+%Auxiliary Predicates that handle Bottom Left Diagonal Repulsions
 checkBottomLeftDiagonal(0,Row,Column,Board,UpdatedBoard):-
     NewRow is Row+1,
     NewRow < 7,
@@ -313,6 +334,7 @@ checkBottomLeftDiagonal(N,Row,Column,Board,UpdatedBoard):-
     UpdatedBoard = Board.
 
 
+%Auxiliary Predicates that handle Left Repulsions
 checkLefttRow(0,Row,Column,Board,UpdatedBoard):-
     NewCol is Column-1,
     NewCol > 0,
@@ -343,6 +365,7 @@ checkLefttRow(N,Row,Column,Board,UpdatedBoard):-
     UpdatedBoard = Board.
 
 
+%Predicates that check if the board has an equal number of pieces to Counter
 checkNumberPieces(0,_,_,_,_).
 
 checkNumberPieces(Counter,Row,Column,Piece,Board):-
@@ -360,7 +383,7 @@ checkNumberPieces(Counter,Row,Column,Piece,Board):-
     NewRow is Row -1,
     checkNumberPieces(Counter,NewRow,NewColumn,Piece,Board).
 
-
+%Executes the game's repulsions in all direction after a piece is placed
 repulsion(Row,Column,Board,UpdatedBoard):-
     checkTopLeftDiagonal(1,Row,Column,Board,UpdatedBoard1),
     checkUpperColumn(1,Row,Column,UpdatedBoard1,UpdatedBoard2),
@@ -372,7 +395,7 @@ repulsion(Row,Column,Board,UpdatedBoard):-
     checkLefttRow(1,Row,Column,UpdatedBoard7,UpdatedBoard).
 
 
-%Checks if the game is over, not implemented yet
+%Checks if the game is over
 game_over(Board,Winner):- 
     (
         checkNumberPieces(8,6,6,1,Board),
