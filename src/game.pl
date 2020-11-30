@@ -58,15 +58,17 @@ playerMove(p,Player,Board,NextPlayer,UpdatedBoard):-
     once(playPiece(Player,Board,NextPlayer,UpdatedBoard)).
 
 playerMove(b1,Player,Board,NextPlayer,UpdatedBoard):-
+    sleep(1),
     choose_move(Board,Player,b1,Move),
     player(Player,NextPlayer),
     nth0(0,Move,RowChoosen),
     nth0(1,Move,ColumnChoosen),
     nth0(2,Move,UpdatedBoard),
-    write('Pc Played in Row: '),
-    write(RowChoosen),nl,
+    checkColumn(Column,ColumnChoosen),
     write('Pc Played in Column: '),
-    write(ColumnChoosen).
+    write(Column),nl,
+    write('Pc Played in Row: '),
+    write(RowChoosen).
 
 playerMove(b2,Player,Board,NextPlayer,UpdatedBoard):-
     choose_move(Board,Player,b2,Move),
@@ -74,15 +76,11 @@ playerMove(b2,Player,Board,NextPlayer,UpdatedBoard):-
     nth0(0,Move,RowChoosen),
     nth0(1,Move,ColumnChoosen),
     nth0(2,Move,UpdatedBoard),
-    write('Pc Played in Row: '),
-    write(RowChoosen),nl,
+    checkColumn(Column,ColumnChoosen),
     write('Pc Played in Column: '),
-    write(ColumnChoosen).
-
-/*
-choosePlay(FirstMode,Player,Board,NextPlayer,UpdatedBoard):-
-    playerMove(FirstMode,Player,Board,NextPlayer,UpdatedBoard).
-*/
+    write(Column),nl,
+    write('Pc Played in Row: '),
+    write(RowChoosen).
 
 
 %Displays the result after ending the game

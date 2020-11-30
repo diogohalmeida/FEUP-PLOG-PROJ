@@ -177,20 +177,6 @@ pointsOfBoards([H|T],ListBoards,Player,FinalListOfBoards):-
     nth0(2,H,Board),
     value(Board,Player,PlayerPoints),
     value(Board,OtherPlayer,OpponentPoints),
-    /*(
-        checkAll(Board,Player)->Points1 is 100;
-        Points1 is 0
-    ),
-    (
-        checkAll(Board,OtherPlayer)->Points2 is 100;
-        Points2 is 0    
-    ),
-    pointsForPiecesOnBoard(Board,6,6,OtherPlayer,0,Points3),
-    pointsForPiecesOnBoard(Board,6,6,Player,0,Points4),
-    %write('Row: '),write(Row),write(' Col: '),write(Column),
-    pointsForTwoInRow(Board,OtherPlayer,Points5),
-    pointsForTwoInRow(Board,Player,Points6),
-    Points is Points1-Points2-(2*Points3)+Points4-(20*Points5)+(5*Points6),*/
     Points is (PlayerPoints - 3*OpponentPoints),
     append(ListBoards,[[Row,Column,Board,Points]],NewListBoards),
     pointsOfBoards(T,NewListBoards,Player,FinalListOfBoards).

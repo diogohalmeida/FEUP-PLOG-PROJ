@@ -26,6 +26,12 @@ checkColumn('C', 3).
 checkColumn('D', 4).
 checkColumn('E', 5).
 checkColumn('F', 6).
+checkColumn(a, 1).
+checkColumn(b, 2).
+checkColumn(c, 3).
+checkColumn(d, 4).
+checkColumn(e, 5).
+checkColumn(f, 6).
 checkColumn(_Column, CheckedColumn) :-
     write('Invalid Column!\nSelect again:\n'),
     readColumn(CheckedColumn).
