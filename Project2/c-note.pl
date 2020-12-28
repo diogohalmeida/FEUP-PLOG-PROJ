@@ -1,5 +1,44 @@
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
+:-use_module(library(random)).
+
+%implementation of call_nth in sicstus
+%:- module(call_nth, [call_nth/2]).
+
+:- use_module(library(structs),
+         [new/2,
+          dispose/1,
+          get_contents/3,
+          put_contents/3]).
+
+:- meta_predicate(call_nth(0, ?)).
+:- meta_predicate(call_nth1(0, +, ?)).
+
+call_nth(Goal_0, Nth) :-
+   new(unsigned_32, Counter),
+   call_cleanup(call_nth1(Goal_0, Counter, Nth),
+           dispose(Counter)).
+
+call_nth1(Goal_0, Counter, Nth) :-
+    nonvar(Nth),
+    !,
+    Nth \== 0,
+    \+arg(Nth,s(1),2), % produces all expected errors
+    call(Goal_0),
+    get_contents(Counter, contents, Count0),
+    Count1 is Count0+1,
+    (  Nth == Count1
+    -> !
+    ;  put_contents(Counter, contents, Count1),
+        fail
+    ).
+
+call_nth1(Goal_0, Counter, Nth) :-
+    call(Goal_0),
+    get_contents(Counter, contents, Count0),
+    Count1 is Count0+1,
+    put_contents(Counter, contents, Count1),
+    Nth = Count1.
 
 flatten([], []) :- !. 
 flatten([L|Ls], FlatL) :-
@@ -68,7 +107,7 @@ solver(InputList, Sum, OutputList):-
     length(OutputList,Length),
     domain(OutputList,1,Sum),
     %Rows = InputList,
-    makeRow(OutputList,1,RowLength,[],Rows),
+    makeRow(OutputList,1,RowLength,[],Rows), 
     %write(Rows),
     transpose(Rows,Cols),
     sumLine(Rows,Sum),
@@ -127,6 +166,78 @@ print_element(X):-
     write(' '),
     write(X),
     write(' |').
+
+%predicates copied from stackoverflow to generate random labeling values 
+randomLabelingValues(Var, _Rest, BB, BB1) :-
+    fd_set(Var, Set),
+    select_best_value(Set, Value),
+    (   
+        first_bound(BB, BB1), Var #= Value
+        ;   
+        later_bound(BB, BB1), Var #\= Value
+    ).
+
+select_best_value(Set, BestValue):-
+    fdset_to_list(Set, Lista),
+    length(Lista, Len),
+    random(0, Len, RandomIndex),
+    nth0(RandomIndex, Lista, BestValue).
+
+choose([], []).
+choose(List, Elt) :-
+    length(List, Length),
+    random(0, Length, Index),
+    nth0(Index, List, Elt).
+
+chooseRandomDigit(Number, Digit):-
+    number_codes(Number,List),
+    choose(List,Element),
+    Digit is Element-48.
+
+/*call_nth(Goal_0, C) :-
+    State = count(0,_), % note the extra argument which remains a variable
+    Goal_0,
+    arg(1, State, C1),
+    C2 is C1+1,
+    nb_setarg(1, State, C2),
+    C = C2.*/
+
+more_than_once(Goal) :-
+    \+ \+ call_nth(Goal,2).
+
+generateRandomPuzzle(RowLength,Sum,OutputList):-
+    BoardSize is RowLength*RowLength,
+    length(Aux,BoardSize),
+    domain(Aux,1,Sum),
+    makeRow(Aux,1,RowLength,[],Rows),
+    transpose(Rows,Cols),
+    sumLine(Rows,Sum),
+    sumLine(Cols,Sum),
+    labeling([value(randomLabelingValues)], Aux),
+    maplist(chooseRandomDigit,Aux,OutputList).
+
+generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList):-
+    BoardSize is RowLength*RowLength,
+    length(Aux,BoardSize),
+    domain(Aux,1,Sum),
+    makeRow(Aux,1,RowLength,[],Rows),
+    transpose(Rows,Cols),
+    sumLine(Rows,Sum),
+    sumLine(Cols,Sum),
+    labeling([value(randomLabelingValues)], Aux),
+    maplist(chooseRandomDigit,Aux,OutputList),
+    once(makeRow(OutputList,1,RowLength,[],Matrix)),
+    \+more_than_once(solver(Matrix,Sum,_)).
+
+cNote(RowLength,Sum,'unique'):-
+    generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList),
+    makeRow(OutputList,1,RowLength,[],Matrix),
+    print_board(Matrix,'Problem generated:'). 
+
+cNote(RowLength,Sum):-
+    generateRandomPuzzle(RowLength,Sum,OutputList),
+    makeRow(OutputList,1,RowLength,[],Matrix),
+    print_board(Matrix,'Problem generated:').
 
 cNote(InputList):-
     nth1(1,InputList,Row),
