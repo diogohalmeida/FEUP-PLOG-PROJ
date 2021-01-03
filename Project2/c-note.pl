@@ -248,14 +248,158 @@ cNoteGenerate(RowLength,Sum):-
 cNote(InputList,Sum):-
     nth1(1,InputList,Row),
     length(Row,RowLength),
-    once(print_board(InputList,'Before:')),
+    once(print_board(InputList,'Grid:')),
     reset_timer,
     solver(InputList,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
-    print_board(Matrix,'After:'),
+    print_board(Matrix,'Solution:'),
     print_time, nl,
     fd_statistics.
 
 
+/*============================= Menus =============================*/
+
+
+cNoteMenu:-
+    printMainMenu,
+    readMenuOption.
+
+printMainMenu:-
+    write('\n\n _______________________________________________________________________ \n'),
+    write('|                                                                       |\n'),
+    write('|                                                                       |\n'),
+    write('|        ______        .__   __.   ______   .___________. _______       |\n'),
+    write('|       /      |       |  \\ |  |  /  __  \\  |           ||   ____|      |\n'),
+    write('|      |  ,----  ______|   \\|  | |  |  |  | `---|  |----`|  |__         |\n'),
+    write('|      |  |     |______|  . `  | |  |  |  |     |  |     |   __|        |\n'),
+    write('|      |  `----.       |  |\\   | |  `--   |     |  |     |  |____       |\n'),
+    write('|       \\______|       |__| \\__|  \\______/      |__|     |_______|      |\n'),
+    write('|                                                                       |\n'),   
+    write('|         Add some digits before or after the digits in the grid        |\n'),
+    write('|                so that each row and column sums to 100                |\n'),   
+    write('|                                                                       |\n'),                                                                   
+    write('|                    _______________________________                    |\n'),
+    write('|                   |                               |                   |\n'),
+    write('|                   | 1. Solve a Problem            |                   |\n'),
+    write('|                   |                               |                   |\n'),
+    write('|                   | 2. Generate a Problem         |                   |\n'),
+    write('|                   |                               |                   |\n'),
+    write('|                   | 0. Exit                       |                   |\n'),
+    write('|                   |_______________________________|                   |\n'),
+    write('|                                                                       |\n'),
+    write('|_______________________________________________________________________|\n').
+
+
+readMenuOption:-
+    repeat,
+        write('Select the desired option:\n'),
+        once(read(Option)),
+        checkMenuOption(Option),
+    runOption(Option).
+
+
+checkMenuOption(0).
+checkMenuOption(1).
+checkMenuOption(2).
+
+checkMenuOption(_):-
+    write('Invalid Option!\nTry Again:\n'),
+    fail.
+
+runOption(0):-
+    write('\nExiting C-Note...\n').
+
+runOption(1):-
+    repeat,
+        write('Write the desired grid to solve:\n'),
+        once(read(Matrix)),
+        cNote(Matrix),
+    cNoteMenu.
+    
+
+runOption(2):-
+    printProblemMenu,
+    readProblemMenuOption.
+
+
+printProblemMenu:-
+    write('\n\n _______________________________________________________________________ \n'),
+    write('|                                                                       |\n'),
+    write('|                                                                       |\n'),
+    write('|        ______        .__   __.   ______   .___________. _______       |\n'),
+    write('|       /      |       |  \\ |  |  /  __  \\  |           ||   ____|      |\n'),
+    write('|      |  ,----  ______|   \\|  | |  |  |  | `---|  |----`|  |__         |\n'),
+    write('|      |  |     |______|  . `  | |  |  |  |     |  |     |   __|        |\n'),
+    write('|      |  `----.       |  |\\   | |  `--   |     |  |     |  |____       |\n'),
+    write('|       \\______|       |__| \\__|  \\______/      |__|     |_______|      |\n'),
+    write('|                                                                       |\n'),   
+    write('|         Add some digits before or after the digits in the grid        |\n'),
+    write('|                so that each row and column sums to 100                |\n'),   
+    write('|                                                                       |\n'),                                                                   
+    write('|                  __________________________________                   |\n'),
+    write('|                 |                                  |                  |\n'),
+    write('|                 | 1. Problem w/ unique solution    |                  |\n'),
+    write('|                 |                                  |                  |\n'),
+    write('|                 | 2. Problem w/ multiple solutions |                  |\n'),
+    write('|                 |                                  |                  |\n'),
+    write('|                 | 0. Go Back                       |                  |\n'),
+    write('|                 |__________________________________|                  |\n'),
+    write('|                                                                       |\n'),
+    write('|_______________________________________________________________________|\n').
+
+
+readGridSize(Size):-
+    repeat,
+        write('Write the desired Grid Size:\n'),
+        once(read(Size)),
+        checkSize(Size).
+
+checkSize(Size):-
+    Size > 0.
+
+readProblemMenuOption:-
+    repeat,
+        write('Select the desired option:\n'),
+        once(read(Option)),
+        checkMenuOption(Option),
+    runProblemOption(Option).
+
+
+runProblemOption(0):-
+    cNoteMenu.
+
+runProblemOption(1):-
+    readGridSize(Size),
+    cNote(Size, 100,'unique', Matrix),
+    repeat,
+        write('Do you want to see the solution to this problem? (0 - No | 1 - Yes):\n'),
+        once(read(Option)),
+        checkYesNo(Option),
+    runSolutionOption(Option, Matrix).
+
+runProblemOption(2):-
+    readGridSize(Size),
+    cNote(Size, 100, Matrix),
+    repeat,
+        write('Do you want to see the solution to this problem? (0 - No | 1 - Yes):\n'),
+        once(read(Option)),
+        checkYesNo(Option),
+    runSolutionOption(Option, Matrix).
+
+
+checkYesNo(0).
+checkYesNo(1).
+
+checkYesNo(_):-
+    write('Invalid Option!\nTry Again:\n'),
+    fail.
+
+
+runSolutionOption(0, _Matrix):-
+    cNoteMenu.
+
+runSolutionOption(1, Matrix):-
+    cNote(Matrix),
+    cNoteMenu.
 
 
