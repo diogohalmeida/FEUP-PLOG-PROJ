@@ -2,6 +2,12 @@
 :-use_module(library(lists)).
 :-use_module(library(random)).
 
+reset_timer :- statistics(walltime,_).	
+print_time :-
+	statistics(walltime,[_,T]),
+	TS is ((T//10)*10)/1000,
+	nl, write('Time: '), write(TS), write('s'), nl, nl.
+
 %implementation of call_nth in sicstus
 %:- module(call_nth, [call_nth/2]).
 
@@ -229,24 +235,26 @@ generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList):-
     once(makeRow(OutputList,1,RowLength,[],Matrix)),
     \+more_than_once(solver(Matrix,Sum,_)).
 
-cNote(RowLength,Sum,'unique', Matrix):-
+cNoteGenerateUnique(RowLength,Sum,'unique'):-
     generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
     print_board(Matrix,'Problem generated:'). 
 
-cNote(RowLength,Sum, Matrix):-
+cNoteGenerate(RowLength,Sum):-
     generateRandomPuzzle(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
     print_board(Matrix,'Problem generated:').
 
-cNote(InputList):-
+cNote(InputList,Sum):-
     nth1(1,InputList,Row),
     length(Row,RowLength),
     once(print_board(InputList,'Grid:')),
-    solver(InputList,100,OutputList),
+    reset_timer,
+    solver(InputList,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
-    print_board(Matrix,'Solution:').
-
+    print_board(Matrix,'Solution:'),
+    print_time, nl,
+    fd_statistics.
 
 
 /*============================= Menus =============================*/
