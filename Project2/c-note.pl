@@ -235,12 +235,12 @@ generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList):-
     once(makeRow(OutputList,1,RowLength,[],Matrix)),
     \+more_than_once(solver(Matrix,Sum,_)).
 
-cNoteGenerateUnique(RowLength,Sum,'unique'):-
+cNoteGenerateUnique(RowLength,Sum, Matrix):-
     generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
     print_board(Matrix,'Problem generated:'). 
 
-cNoteGenerate(RowLength,Sum):-
+cNoteGenerate(RowLength,Sum, Matrix):-
     generateRandomPuzzle(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
     print_board(Matrix,'Problem generated:').
@@ -313,7 +313,7 @@ runOption(1):-
     repeat,
         write('Write the desired grid to solve:\n'),
         once(read(Matrix)),
-        cNote(Matrix),
+        cNote(Matrix, 100),
     cNoteMenu.
     
 
@@ -370,7 +370,7 @@ runProblemOption(0):-
 
 runProblemOption(1):-
     readGridSize(Size),
-    cNote(Size, 100,'unique', Matrix),
+    cNoteGenerateUnique(Size,100, Matrix),
     repeat,
         write('Do you want to see the solution to this problem? (0 - No | 1 - Yes):\n'),
         once(read(Option)),
@@ -379,7 +379,7 @@ runProblemOption(1):-
 
 runProblemOption(2):-
     readGridSize(Size),
-    cNote(Size, 100, Matrix),
+    cNoteGenerate(Size , 100, Matrix),
     repeat,
         write('Do you want to see the solution to this problem? (0 - No | 1 - Yes):\n'),
         once(read(Option)),
@@ -399,7 +399,7 @@ runSolutionOption(0, _Matrix):-
     cNoteMenu.
 
 runSolutionOption(1, Matrix):-
-    cNote(Matrix),
+    cNote(Matrix, 100),
     cNoteMenu.
 
 
