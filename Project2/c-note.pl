@@ -45,7 +45,7 @@ call_nth1(Goal_0, Counter, Nth) :-
     put_contents(Counter, contents, Count1),
     Nth = Count1.
 
-%predicate to convert a list of list to a flatten list
+%predicate to convert a list of lists to a flatten list
 flatten([], []) :- !. 
 flatten([L|Ls], FlatL) :-
     !,
@@ -183,7 +183,7 @@ chooseRandomDigit(Number, Digit):-
     choose(List,Element),
     Digit is Element-48.
 
-%predicate to verify if a predicate succeds more than once time
+%predicate to verify if a predicate succeeds more than once
 more_than_once(Goal) :-
     \+ \+ call_nth(Goal,2).
 
@@ -213,17 +213,17 @@ generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList):-
     once(makeRow(OutputList,1,RowLength,[],Matrix)),
     \+more_than_once(solver(Matrix,Sum,_)).
 
-%predicate to geenrate a random puzzle with unique solution and display it to the user
+%predicate to generate a random puzzle with unique solution and display it to the user
 cNoteGenerateUnique(RowLength,Sum, Matrix):-
     generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
-    print_board(Matrix,'Problem generated:'). 
+    print_board(Matrix,'Problem generated:'),!. 
 
-%predicate to geenrate a random puzzle and display it to the user
+%predicate to generate a random puzzle and display it to the user
 cNoteGenerate(RowLength,Sum, Matrix):-
     generateRandomPuzzle(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
-    print_board(Matrix,'Problem generated:').
+    print_board(Matrix,'Problem generated:'),!.
 
 %predicate to solver a given problem and display it to the user
 cNote(InputList,Sum):-
