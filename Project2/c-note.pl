@@ -2,15 +2,14 @@
 :-use_module(library(lists)).
 :-use_module(library(random)).
 
+%predicates given in the moodle section to have time of execution
 reset_timer :- statistics(walltime,_).	
 print_time :-
 	statistics(walltime,[_,T]),
 	TS is ((T//10)*10)/1000,
 	nl, write('Time: '), write(TS), write('s'), nl, nl.
 
-%implementation of call_nth in sicstus
-%:- module(call_nth, [call_nth/2]).
-
+%predicates for the implementation of call_nth in sicstus
 :- use_module(library(structs),
          [new/2,
           dispose/1,
@@ -46,6 +45,7 @@ call_nth1(Goal_0, Counter, Nth) :-
     put_contents(Counter, contents, Count1),
     Nth = Count1.
 
+%predicate to convert a list of list to a flatten list
 flatten([], []) :- !. 
 flatten([L|Ls], FlatL) :-
     !,
@@ -54,31 +54,13 @@ flatten([L|Ls], FlatL) :-
     append(NewL, NewLs, FlatL).
 flatten(L, [L]).
 
-/*cNote(InitialBoard, FinalBoard):-
-    flatten(InitialBoard,BoardValues),
-    nth1(1,BoardValues,Elem1);
-    nth1(2,BoardValues,Elem2);
-    nth1(3,BoardValues,Elem3);
-    nth1(4,BoardValues,Elem4);
-    nth1(5,BoardValues,Elem5);
-    nth1(6,BoardValues,Elem6);
-    nth1(7,BoardValues,Elem7);
-    nth1(8,BoardValues,Elem8);
-    nth1(9,BoardValues,Elem9);
-    Vars = [A1,A2,A3,A4,A5,A6,A7,A8,A9],
-    domain(Vars,0,9),
-    A1 + A2 + A3 #= 100,
-    A4 + A5 + A6 #= 100,
-    A7 + A8 + A9 #= 100,
-    A1 + A4 + A7 #= 100,
-    A2 + A5 + A8 #= 100,
-    A3 + A6 + A9 #= 100,*/
-
+%predicate to apply the restrictions for the sum of a line be equal to Sum
 sumLine([],_).
 sumLine([H|T],Sum):-
     sum(H,#=,Sum),
     sumLine(T,Sum).
 
+%predicate to apply the restriction of a number including a digit given by the user
 includesDigit(Var, Number):-
     Var mod 10  #= Number.
 includesDigit(Var, Number):-
@@ -86,12 +68,14 @@ includesDigit(Var, Number):-
     Rest #= Var // 10,
     includesDigit(Rest, Number).
 
+%predicate to iterate the list of vars to apply the restrictions in the includesDigit predicate
 numberRestrictions([], _, _).
 numberRestrictions([Var|T], InputList, Index):-
     nth1(Index, InputList, Num),
     includesDigit(Var, Num),
     NewIndex is Index + 1, numberRestrictions(T, InputList, NewIndex).
 
+%predicates to convert a list to a list of lists
 makeRow([],_,_,_,[]).
 
 makeRow([H|T],RowLength,RowLength,CurrentRow,[NewCurrentRow|Rest]):-
@@ -104,7 +88,7 @@ makeRow([H|T],CurrentRowLength,RowLength,CurrentRow,FinalRow):-
     makeRow(T,NewCurrentRowLength,RowLength,NewCurrentRow,FinalRow).
 
 
-
+%predicate to solve the problem given in InputList with a sum of lines and rows equal to Sum and give the solution in OutputList
 solver(InputList, Sum, OutputList):-
     flatten(InputList,FlattenList),
     nth1(1,InputList,Row),
@@ -112,17 +96,14 @@ solver(InputList, Sum, OutputList):-
     length(FlattenList,Length),
     length(OutputList,Length),
     domain(OutputList,1,Sum),
-    %Rows = InputList,
     makeRow(OutputList,1,RowLength,[],Rows), 
-    %write(Rows),
     transpose(Rows,Cols),
     sumLine(Rows,Sum),
     sumLine(Cols,Sum),
     numberRestrictions(OutputList,FlattenList,1),
     labeling([],OutputList).
-    %makeRow(OutputList,1,RowLength,[],Teste).
-    %write(Teste),!.
 
+%predicates to print the boards for the user
 print_board(Board, Message):-
     nth1(1,Board,Row),
     length(Row,RowLength),
@@ -173,7 +154,7 @@ print_element(X):-
     write(X),
     write(' |').
 
-%predicates copied from stackoverflow to generate random labeling values 
+%predicates to generate random labeling values 
 randomLabelingValues(Var, _Rest, BB, BB1) :-
     fd_set(Var, Set),
     select_best_value(Set, Value),
@@ -189,28 +170,24 @@ select_best_value(Set, BestValue):-
     random(0, Len, RandomIndex),
     nth0(RandomIndex, Lista, BestValue).
 
+%predicates to choose a random element of a list
 choose([], []).
 choose(List, Elt) :-
     length(List, Length),
     random(0, Length, Index),
     nth0(Index, List, Elt).
 
+%predicate to choose a random digit to be shown
 chooseRandomDigit(Number, Digit):-
     number_codes(Number,List),
     choose(List,Element),
     Digit is Element-48.
 
-/*call_nth(Goal_0, C) :-
-    State = count(0,_), % note the extra argument which remains a variable
-    Goal_0,
-    arg(1, State, C1),
-    C2 is C1+1,
-    nb_setarg(1, State, C2),
-    C = C2.*/
-
+%predicate to verify if a predicate succeds more than once time
 more_than_once(Goal) :-
     \+ \+ call_nth(Goal,2).
 
+%predicate to generate a random problem
 generateRandomPuzzle(RowLength,Sum,OutputList):-
     BoardSize is RowLength*RowLength,
     length(Aux,BoardSize),
@@ -222,6 +199,7 @@ generateRandomPuzzle(RowLength,Sum,OutputList):-
     labeling([value(randomLabelingValues)], Aux),
     maplist(chooseRandomDigit,Aux,OutputList).
 
+%predicate to generate a random problem with unique solution
 generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList):-
     BoardSize is RowLength*RowLength,
     length(Aux,BoardSize),
@@ -235,16 +213,19 @@ generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList):-
     once(makeRow(OutputList,1,RowLength,[],Matrix)),
     \+more_than_once(solver(Matrix,Sum,_)).
 
+%predicate to geenrate a random puzzle with unique solution and display it to the user
 cNoteGenerateUnique(RowLength,Sum, Matrix):-
     generateRandomPuzzleWithUniqueSolution(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
     print_board(Matrix,'Problem generated:'). 
 
+%predicate to geenrate a random puzzle and display it to the user
 cNoteGenerate(RowLength,Sum, Matrix):-
     generateRandomPuzzle(RowLength,Sum,OutputList),
     makeRow(OutputList,1,RowLength,[],Matrix),
     print_board(Matrix,'Problem generated:').
 
+%predicate to solver a given problem and display it to the user
 cNote(InputList,Sum):-
     nth1(1,InputList,Row),
     length(Row,RowLength),
@@ -258,7 +239,7 @@ cNote(InputList,Sum):-
 
 
 /*============================= Menus =============================*/
-
+%predicates to show the menus to the user with several options to choose
 
 cNoteMenu:-
     printMainMenu,
