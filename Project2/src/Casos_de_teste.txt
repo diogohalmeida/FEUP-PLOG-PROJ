@@ -1,0 +1,26 @@
+Problemas fornecidos no enunciado:
+cNote([[8,8,4],[6,2,5],[3,6,1]],100).
+
+cNote([[8,7,8],[3,1,2],[2,7,2]],100).
+
+cNote([[7,5,1],[2,7,2],[9,4,7]],100).
+
+
+Problemas gerados com várias soluções:
+cNoteGenerate(3,100, X).
+cNoteGenerate(4,100,X).
+cNoteGenerate(5,500,X).
+
+Problemas gerados com uma única solução:
+cNoteGenerateUnique(3,100,X).
+cNoteGenerateUnique(2,100,X).
+cNoteGenerateUnique(2,300,X).
+cNoteGenerateUnique(3,300,X).
+
+
+Problemas de diversas dimensões:
+cNote([[5,5],[5,5]],100).
+cNote([[4,3,6],[3,3,9],[4,3,7]],100).
+cNote([[3,2,8,4],[2,6,5,4],[1,6,4,4],[3,4,1,2]],100).
+cNote([[8,7,8],[3,1,2],[2,7,2]],500).
+cNote([[4,6,5],[8,2,5],[7,1,8]],1000).
